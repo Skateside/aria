@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8">
+<title>Mocha Tests</title>
+<link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+
+<!--script>
+(function () {
+
+    "use strict";
+
+    function polyfill(object, name, value) {
+
+        if (typeof object[name] !== typeof value) {
+
+            Object.defineProperty(object, name, {
+                value: value,
+                configurable: true,
+                enumerable: false,
+                writable: true
+            });
+
+        }
+
+    }
+
+    function polfillAll(objects, methods) {
+
+        if (objects !== Array.prototype && !Array.isArray(objects)) {
+            objects = [objects];
+        }
+
+        objects.forEach(function (object) {
+
+            Object
+                .keys(methods)
+                .forEach(function (key) {
+                    polyfill(object, key, methods[key]);
+                });
+
+        });
+
+    }
+
+    polfillAll(Object, {
+
+        assign: function (source) {
+
+            var args = Array.prototype.slice.call(arguments, 1);
+
+            args.forEach(function (arg) {
+
+                Object.entries(arg).forEach(function (pair) {
+                    source[pair[0]] = pair[1];
+                });
+
+            });
+
+            return source;
+
+        },
+
+        entrise: function (object) {
+
+            return Object.keys(object).map(function (key) {
+                return [key, object[key]];
+            });
+
+        }
+
+    });
+
+}());
+
+if (!Object.entries) {
+
+    Object.defineProperty(Object, "entries", {
+        configurable: true,
+        enumerable: false,
+        writable: true,
+        value: function (object) {
+            return Object.keys(object).map(function (key) {
+                return [key, object[key]];
+            });
+        }
+    });
+
+}
+</script-->
+<script src="../aria.js"></script>
+
+</head>
+<body>
+
+<div id="mocha"></div>
+<script src="../node_modules/mocha/mocha.js"></script>
+<script src="../node_modules/chai/chai.js"></script>
+
+<script>
+if (window.initMochaPhantomJS) {
+    window.initMochaPhantomJS();
+}
+
+window._TEST_MODE = true;
+mocha.setup({
+    ui: "bdd"
+});
+</script>
+
+<!-- Private -->
+<script src="core.js"></script>
+
+<script>
+// Only tests run in real browser, injected script run if options.run == true
+// if (navigator.userAgent.indexOf('PhantomJS') < 0) {
+//     mocha.run();
+// }
+
+if (!window.ARIA) {
+    throw new Error("PhantomJS does not understand ES6. Object.entries(), Object.assign(), Set()");
+}
+
+if (window.mochaPhantomJS) {
+    mochaPhantomJS.run();
+} else {
+    mocha.run();
+}
+</script>
+
+</body>
+</html>
