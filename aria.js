@@ -140,11 +140,19 @@
         }
 
         add(...values) {
-            values.forEach(super.add, this);
+
+            values.forEach(
+                (value) => super.add.call(this, String(value).trim())
+            );
+
         }
 
         delete(...values) {
-            values.forEach(super.delete, this);
+
+            values.forEach(
+                (value) => super.delete.call(this, String(value).trim())
+            );
+
         }
 
         toArray(handler, context) {
@@ -220,6 +228,148 @@
 
     "use strict";
 
+    // ARIA.extendHidden({
+    //
+    //     refExists: function (ref) {
+    //         return ARIA.getById(ref) !== null;
+    //     }
+    //
+    // });
+
+    ARIA.extend({
+
+        set: function set(element, attribute, value) {
+
+            if (attribute && typeof attribute === "object") {
+
+                Object
+                    .entries(attribute)
+                    .forEach(([attr, val]) => set(element, attr, val));
+
+            } else {
+
+                let attr = ARIA.normalise(attribute);
+
+                if (typeof value === "function") {
+
+                    value = value(
+                        element,
+                        ARIA.getDOMAttribute(element, attr),
+                        attr
+                    );
+
+                }
+
+                let list = new ARIA.List(
+                    ARIA.asArray(value).map(ARIA.asString)
+                );
+
+                ARIA.setDOMAttribute(element, attr, list);
+
+            }
+
+        },
+
+        get(element, attribute) {
+            return ARIA.getDOMAttribute(element, ARIA.normalise(attribute));
+        },
+
+        getRef(element, attribute) {
+
+            let list = new ARIA.List(ARIA.get(element, attribute));
+
+            return list.toArray(ARIA.getById);
+
+        },
+
+        has(element, attribute) {
+            return ARIA.hasDOMAttribute(element, ARIA.normalise(attribute));
+        },
+
+        hasRef(element, attribute) {
+
+            return (
+                ARIA.has(element, attribute)
+                // && ARIA.getRef(element, attribute).every(ARIA.refExists)
+                && !ARIA.getRef(element, attribute).includes(null)
+            );
+
+        },
+
+        remove: function remove(element, attribute, value) {
+
+            if (attribute && typeof attribute === "object") {
+
+                Object
+                    .entries(attribute)
+                    .forEach(([attr, val]) => remove(element, attr, val));
+
+            } else {
+
+                let normalised = ARIA.normalise(attribute);
+
+                if (value === null || value === undefined) {
+                    ARIA.removeDOMAttribute(element, normalised);
+                } else {
+
+                    let current = ARIA.getDOMAttribute(element, normalised);
+
+                    if (typeof value === "function") {
+                        value = value(element, current, normalised);
+                    }
+
+                    let list = new ARIA.List(current);
+                    let values = ARIA.asArray(value).map(ARIA.asString);
+
+                    list.delete(...values);
+
+                    if (list.size) {
+                        ARIA.setDOMAttribute(element, normalised, list);
+                    } else {
+                        ARIA.removeDOMAttribute(element, normalised);
+                    }
+
+                }
+
+            }
+
+        },
+
+        add: function add(element, attribute, value) {
+
+            if (attribute && typeof attribute === "object") {
+
+                Object
+                    .entries(attribute)
+                    .forEach(([attr, val]) => add(element, attr, val));
+
+            } else {
+
+                let attr = ARIA.normalise(attribute);
+                let current = ARIA.getDOMAttribute(element, attr);
+
+                if (typeof value === "function") {
+                    value = value(element, current, attr);
+                }
+
+                let list = new ARIA.List(current);
+                let values = ARIA.asArray(value).map(ARIA.asString);
+
+                list.add(...values);
+                ARIA.setDOMAttribute(element, attr, list);
+
+            }
+
+        }
+
+    });
+
+}(window.ARIA));
+
+(function (ARIA) {
+
+    "use strict";
+
     ARIA.extend({
 
         setRole(element, role) {
@@ -283,130 +433,35 @@
 
     "use strict";
 
+    let focusable = [
+            "a[href]",
+            "button",
+            "iframe",
+            "input:not([type=\"hidden\"]):not([type=\"file\"])",
+            "select",
+            "textarea",
+            "[tabindex]",
+            "[contentEditable=\"true\"]"
+        ]
+        .map((sel) => `${sel}:not([disabled]):not([hidden]):not([inert])`)
+        .join(",");
+
     ARIA.extendHidden({
 
-        refExists: function (ref) {
-            return ARIA.getById(ref) !== null;
+        is(element, selector) {
+            return element.matches(selector);
         }
 
     });
 
     ARIA.extend({
 
-        set: function set(element, attribute, value) {
+        focusable,
 
-            if (attribute && typeof attribute === "object") {
+        makeFocusable(element) {
 
-                Object
-                    .entries(attribute)
-                    .forEach(([attr, val]) => set(element, attr, val));
-
-            } else {
-
-                let attr = ARIA.normalise(attribute);
-
-                if (typeof value === "function") {
-                    value = value(element, ARIA.getDOMAttribute(attr), attr);
-                }
-
-                let list = new ARIA.List(
-                    ARIA.asArray(value).map(ARIA.asString)
-                );
-
-                ARIA.setDOMAttribute(element, attr, list);
-
-            }
-
-        },
-
-        get(element, attribute) {
-            return ARIA.getDOMAttribute(element, ARIA.normalise(attribute));
-        },
-
-        getRef(element, attribute) {
-
-            let list = new ARIA.List(ARIA.get(element, attribute));
-
-            return list.toArray(ARIA.getById);
-
-        },
-
-        has(element, attribute) {
-            return ARIA.hasDOMAttribute(element, ARIA.normalise(attribute));
-        },
-
-        hasRef(element, attribute) {
-
-            return (
-                ARIA.has(element, attribute)
-                && ARIA.getRef(element, attribute).every(ARIA.refExists)
-            );
-
-        },
-
-        remove: function remove(element, attribute, value) {
-
-            if (attribute && typeof attribute === "object") {
-
-                Object
-                    .entries(attribute)
-                    .forEach(([attr, val]) => remove(element, attr, val));
-
-            } else {
-
-                let normalised = ARIA.normalise(attribute);
-
-                if (value === undefined) {
-                    ARIA.removeDOMAttribute(element, normalised);
-                } else {
-
-                    let attr = ARIA.normalise(attribute);
-                    let current = ARIA.getDOMAttribute(attr);
-
-                    if (typeof value === "function") {
-                        value = value(element, current, attr);
-                    }
-
-                    let list = new ARIA.List(current);
-                    let values = ARIA.asArray(value).map(ARIA.asString);
-
-                    list.delete(...values);
-
-                    if (list.size) {
-                        ARIA.setDOMAttribute(element, attr, list);
-                    } else {
-                        ARIA.removeDOMAttribute(element, attr);
-                    }
-
-                }
-
-            }
-
-        },
-
-        add: function add(element, attribute, value) {
-
-            if (attribute && typeof attribute === "object") {
-
-                Object
-                    .entries(attribute)
-                    .forEach(([attr, val]) => add(element, attr, val));
-
-            } else {
-
-                let attr = ARIA.normalise(attribute);
-                let current = ARIA.getDOMAttribute(attr);
-
-                if (typeof value === "function") {
-                    value = value(element, current, attr);
-                }
-
-                let list = new ARIA.List(current);
-                let values = ARIA.asArray(value).map(ARIA.asString);
-
-                list.add(...values);
-                ARIA.setDOMAttribute(element, attr, list);
-
+            if (!ARIA.is(element, ARIA.focusable)) {
+                ARIA.setDOMAttribute(element, "tabindex", -1);
             }
 
         }

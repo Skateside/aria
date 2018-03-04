@@ -77,9 +77,8 @@ describe("core", function () {
 
         it("should remove ARIA from the global namespace", function () {
 
-            chai.assert.isDefined(window.ARIA);
             ARIA.noConflict();
-            chai.assert.isUndefined(window.ARIA);
+            chai.assert.notEqual(myARIA, window.ARIA);
 
             window.ARIA = myARIA;
 
@@ -90,6 +89,15 @@ describe("core", function () {
             var value = ARIA.noConflict();
 
             chai.assert.equal(value, myARIA);
+            window.ARIA = myARIA;
+
+        });
+
+        it("should restore the previous value of ARIA", function () {
+
+            var value = ARIA.noConflict();
+
+            chai.assert.equal(window.previousARIA, window.ARIA);
             window.ARIA = myARIA;
 
         });
