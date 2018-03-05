@@ -388,18 +388,26 @@
                     let current = ARIA.getDOMAttribute(element, normalised);
 
                     if (typeof value === "function") {
-                        value = value(element, current, normalised);
-                    }
 
-                    let list = new ARIA.List(current);
-                    let values = ARIA.asArray(value).map(ARIA.asString);
+                        remove(
+                            element,
+                            normalised,
+                            value(element, current, normalised)
+                        );
 
-                    list.delete(...values);
-
-                    if (list.size) {
-                        ARIA.setDOMAttribute(element, normalised, list);
                     } else {
-                        ARIA.removeDOMAttribute(element, normalised);
+
+                        let list = new ARIA.List(current);
+                        let values = ARIA.asArray(value).map(ARIA.asString);
+
+                        list.delete(...values);
+
+                        if (list.size) {
+                            ARIA.setDOMAttribute(element, normalised, list);
+                        } else {
+                            ARIA.removeDOMAttribute(element, normalised);
+                        }
+
                     }
 
                 }
@@ -408,6 +416,86 @@
 
         },
 
+        /**
+         * Adds a value to the given WAI-ARIA attribute for the given element.
+         * If the element does not have the attribute, it is created. If the
+         * value is a function, the result is added to the attribute. Attributes
+         * can be either created/modified individually by passing a string as
+         * the attribute parameter or mutliple can be set at once by passing an
+         * object. Any duplicated values wil be ignored so you will not be able
+         * to add a value that is already in the value.
+         *
+         * Uses {@link ARIA.normalise}, {@link ARIA.getDOMAttribute},
+         * {@link ARIA.List}, {@link ARIA.asArray}, {@link ARIA.asString} and
+         * {@link ARIA.setDOMAttribute}.
+         *
+         * @param {Element}       element
+         *        Element to modify.
+         * @param {Object|String} attribute
+         *        Either the string of the attribute to create/modify or an
+         *        object of attributes to values.
+         * @param {Array.<Element>|Boolean|Element|NodeList|String|ARIA~callback} [value]
+         *        Value of the attribute to create/modify. Only necessary if the
+         *        attribute parameter is a string.
+         *
+         * @example <caption>Creating/adding to an attribute</caption>
+         * // Assuming markup is
+         * // <div id="a"></div>
+         * // <div id="d"></div>
+         * // <div id="g"></div>
+         * var divA = document.getElementById("a");
+         * var divD = document.getElementById("d");
+         * var divG = document.getElementById("g");
+         * ARIA.add(divA, "controls", "b");
+         * // Now div "a" is
+         * // <div id="a" aria-controls="b"></div>
+         * ARIA.add(divA, "controls", function () { return "c"; });
+         * // Now div "a" is
+         * // <div id="a" aria-controls="b c"></div>
+         * ARIA.add(divA, "controls", divD);
+         * // Now div "a" is
+         * // <div id="a" aria-controls="b c d"></div>
+         * ARIA.add(divA, {controls: "e"});
+         * // Now div "a" is
+         * // <div id="a" aria-controls="b c d e"></div>
+         * ARIA.add(divA, {controls: function () { return "f"; }});
+         * // Now div "a" is
+         * // <div id="a" aria-controls="b c d e f"></div>
+         * ARIA.add(divA, {controls: function () { return divG; }});
+         * // Now div "a" is
+         * // <div id="a" aria-controls="b c d e f g"></div>
+         *
+         * @example <caption>Duplicate values are ignored</caption>
+         * // Assuming markup is
+         * // <div id="one" aria-controls="two"></div>
+         * // <div id="two"></div>
+         * var div1 = document.getElementById("one");
+         * var div2 = document.getElementById("two");
+         * ARIA.add(div1, "controls", "two");
+         * // Div "one" is still
+         * // <div id="one" aria-controls="two"></div>
+         * ARIA.add(div1, "controls", function () { return "two"; });
+         * // Div "one" is still
+         * // <div id="one" aria-controls="two"></div>
+         * ARIA.add(div1, "controls", div2);
+         * // Div "one" is still
+         * // <div id="one" aria-controls="two"></div>
+         * ARIA.add(div1, "controls", function () { return div2; });
+         * // Div "one" is still
+         * // <div id="one" aria-controls="two"></div>
+         * ARIA.add(div1, {controls: "two"});
+         * // Div "one" is still
+         * // <div id="one" aria-controls="two"></div>
+         * ARIA.add(div1, {controls: function () { return "two"; }});
+         * // Div "one" is still
+         * // <div id="one" aria-controls="two"></div>
+         * ARIA.add(div1, {controls: div2});
+         * // Div "one" is still
+         * // <div id="one" aria-controls="two"></div>
+         * ARIA.add(div1, {controls: function () { return div2; }});
+         * // Div "one" is still
+         * // <div id="one" aria-controls="two"></div>
+         */
         add: function add(element, attribute, value) {
 
             if (attribute && typeof attribute === "object") {

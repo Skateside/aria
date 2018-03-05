@@ -315,18 +315,26 @@
                     let current = ARIA.getDOMAttribute(element, normalised);
 
                     if (typeof value === "function") {
-                        value = value(element, current, normalised);
-                    }
 
-                    let list = new ARIA.List(current);
-                    let values = ARIA.asArray(value).map(ARIA.asString);
+                        remove(
+                            element,
+                            normalised,
+                            value(element, current, normalised)
+                        );
 
-                    list.delete(...values);
-
-                    if (list.size) {
-                        ARIA.setDOMAttribute(element, normalised, list);
                     } else {
-                        ARIA.removeDOMAttribute(element, normalised);
+
+                        let list = new ARIA.List(current);
+                        let values = ARIA.asArray(value).map(ARIA.asString);
+
+                        list.delete(...values);
+
+                        if (list.size) {
+                            ARIA.setDOMAttribute(element, normalised, list);
+                        } else {
+                            ARIA.removeDOMAttribute(element, normalised);
+                        }
+
                     }
 
                 }
@@ -458,10 +466,19 @@
 
         focusable,
 
-        makeFocusable(element) {
+        // isTabbable = false -> only programmatically focusable.
+        makeFocusable(element, isTabbable) {
 
             if (!ARIA.is(element, ARIA.focusable)) {
-                ARIA.setDOMAttribute(element, "tabindex", -1);
+
+                ARIA.setDOMAttribute(
+                    element,
+                    "tabindex",
+                    isTabbable
+                        ? 0
+                        : -1
+                );
+
             }
 
         }
