@@ -1,8 +1,12 @@
 describe("util", function () {
 
-    const ATTRIBUTE = "abc";
-    const NO_ATTRIBUTE = "def";
-    const VALUE = "123";
+    var ATTRIBUTE = "abc";
+    var NO_ATTRIBUTE = "def";
+    var VALUE = "123";
+
+    function makeId() {
+        return "id-" + Math.floor(Date.now() * Math.random());
+    }
 
     // Attributes
 
@@ -382,7 +386,7 @@ describe("util", function () {
         it("should find an element by ID", function () {
 
             var div = document.createElement("div");
-            var realId = "id-" + Math.floor(Date.now() * Math.random());
+            var realId = makeId();
             div.id = realId;
             document.body.appendChild(div);
             var found = ARIA.getById(realId);
@@ -394,7 +398,7 @@ describe("util", function () {
 
         it("should return null if no element is found", function () {
 
-            var notRealId = "id-" + Math.floor(Date.now() * Math.random());
+            var notRealId = makeId();
 
             chai.assert.isNull(ARIA.getById(notRealId));
 
@@ -407,7 +411,7 @@ describe("util", function () {
         it("should return the ID of an element", function () {
 
             var div = document.createElement("div");
-            div.id =  "id-" + Math.floor(Date.now() * Math.random());
+            div.id =  makeId();
 
             chai.assert.equal(ARIA.identify(div), div.id);
 
@@ -468,6 +472,108 @@ describe("util", function () {
             chai.assert.equal(ARIA.normalise, ARIA.normalize);
 
             ARIA.normalise = normalise;
+
+        });
+
+    });
+
+    describe("asRef", function () {
+
+        it("should convert a string into an array of elements", function () {
+
+            var ids = [
+                makeId(),
+                makeId()
+            ];
+            var divs = [
+                document.createElement("div"),
+                document.createElement("div")
+            ];
+
+            divs.forEach(function (d, i) {
+                d.id = ids[i];
+                document.body.appendChild(d);
+            });
+
+            chai.assert.deepEqual(ARIA.asRef(ids.slice(0, 1).join(" ")), divs.slice(0, 1));
+            chai.assert.deepEqual(ARIA.asRef(ids.join(" ")), divs);
+
+            divs.forEach(function (d) {
+                document.body.removeChild(d);
+            });
+
+        });
+
+        it("should return null for an unrecognised reference", function () {
+
+            var ids = [
+                makeId(),
+                makeId()
+            ];
+            var div = document.createElement("div");
+            div.id = ids[0];
+            document.body.appendChild(div);
+
+            chai.assert.deepEqual(ARIA.asRef(ids.join(" ")), [div, null]);
+
+            document.body.removeChild(div);
+
+        });
+
+        it("should de-duplicate the string", function () {
+
+            var div = document.createElement("div");
+            div.id = makeId();
+            document.body.appendChild(div);
+            var ref = ARIA.asRef(div.id + " " + div.id, "controls");
+
+            chai.assert.equal(ref.length, 1);
+            chai.assert.deepEqual(ref, [div]);
+
+            document.body.removeChild(div);
+
+        });
+
+        it("should return an empty array when there is no attribute", function () {
+
+            var ref = ARIA.asRef(null);
+
+            chai.assert.isArray(ref);
+            chai.assert.equal(ref.length, 0);
+
+        });
+
+    });
+
+    describe("asState", function () {
+
+        it("should convert a string into a boolean", function () {
+
+            chai.assert.isTrue(ARIA.asState("true"));
+            chai.assert.isFalse(ARIA.asState("false"));
+
+        });
+
+        it("should be able to return \"mixed\"", function () {
+            chai.assert.equal(ARIA.asState("mixed"), "mixed");
+        });
+
+        it("should understand boolean values", function () {
+
+            chai.assert.isTrue(ARIA.asState(true));
+            chai.assert.isFalse(ARIA.asState(false));
+
+        });
+
+        it("should return false for all other values", function () {
+
+            chai.assert.isFalse(ARIA.asState(1));
+            chai.assert.isFalse(ARIA.asState({}));
+            chai.assert.isFalse(ARIA.asState());
+            chai.assert.isFalse(ARIA.asState(null));
+            chai.assert.isFalse(ARIA.asState(undefined));
+            chai.assert.isFalse(ARIA.asState(""));
+            chai.assert.isFalse(ARIA.asState("  true  "));
 
         });
 

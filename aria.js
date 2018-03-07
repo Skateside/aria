@@ -222,6 +222,28 @@
         normalize: normaliseDescriptor
     });
 
+    ARIA.extendHidden({
+
+        asRef(value) {
+
+            let list = new ARIA.List(value);
+
+            return list.toArray(ARIA.getById);
+
+        },
+
+        asState(value) {
+
+            return (value === "mixed" || typeof value === "boolean")
+                ? value
+                : typeof value === "string"
+                    ? value === "true"
+                    : false;
+
+        }
+
+    });
+
 }(window.ARIA));
 
 (function (ARIA) {
@@ -275,11 +297,15 @@
         },
 
         getRef(element, attribute) {
+            return ARIA.asRef(ARIA.get(element, attribute));
+            // let list = new ARIA.List(ARIA.get(element, attribute));
+            //
+            // return list.toArray(ARIA.getById);
 
-            let list = new ARIA.List(ARIA.get(element, attribute));
+        },
 
-            return list.toArray(ARIA.getById);
-
+        getState(element, attribute) {
+            return ARIA.asState(ARIA.get(element, attribute));
         },
 
         has(element, attribute) {

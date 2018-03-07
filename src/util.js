@@ -515,4 +515,78 @@
 
     });
 
+    ARIA.extendHidden(/** @lends ARIA */{
+
+        /**
+         * Converts the value into elements.
+         *
+         * @param  {String} value
+         *         The string representation of the value.
+         * @return {Array.<Element>}
+         *         Array containing the elements referenced. If the element
+         *         cannot be found, null will be in its place.
+         *
+         * Uses {@link ARIA.List} and {@link ARIA.get}.
+         *
+         * Used in {@link ARIA.getRef}.
+         *
+         * @example
+         * // Assuming markup is:
+         * // <div id="one"></div>
+         * ARIA.asRef("one"); // -> [<div id="one">]
+         * ARIA.asRef("one two"); // -> [<div id="one">, null]
+         *
+         * @example <caption>Duplicated referneced are discarded</caption>
+         * // Assuming markup is:
+         * // <div id="one"></div>
+         * ARIA.asRef("one two one"); // -> [<div id="one">, null]
+         */
+        asRef(value) {
+
+            let list = new ARIA.List(value);
+
+            return list.toArray(ARIA.getById);
+
+        },
+
+        /**
+         * Converts the value into a boolean or string. This function is
+         * designed to work with WAI-ARIA attributes.
+         *
+         * Used in {@link ARIA.getState}.
+         *
+         * @param  {?} value
+         *         Value to interpret.
+         * @return {Boolean|String}
+         *         Interpreted state.
+         *
+         * @example
+         * ARIA.asState("true"); // -> true
+         * ARIA.asState("mixed"); // -> "mixed"
+         * ARIA.asState("false"); // -> false
+         * ARIA.asState(true); // -> true
+         * ARIA.asState(false); // -> false
+         *
+         * @example <caption>Any value not understood returns false</caption>
+         * ARIA.asState(1); // -> false
+         * ARIA.asState({}); // -> false
+         * ARIA.asState(); // -> false
+         * ARIA.asState(null); // -> false
+         * ARIA.asState(undefined); // -> false
+         * ARIA.asState(""); // -> false
+         * ARIA.asState("  true  "); // -> false
+         */
+        asState(value) {
+
+            return (value === "mixed" || typeof value === "boolean")
+                ? value
+                : typeof value === "string"
+                    ? value === "true"
+                    : false;
+
+        }
+
+    });
+
+
 }(window.ARIA));

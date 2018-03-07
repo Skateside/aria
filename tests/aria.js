@@ -194,6 +194,37 @@ describe("aria", function () {
 
     });
 
+    describe("getState", function () {
+
+        it("should return the state of an attribute", function () {
+
+            var divTrue = document.createElement("div");
+            divTrue.setAttribute("aria-busy", true);
+            var divMixed = document.createElement("div");
+            divTrue.setAttribute("aria-checked", "mixed");
+            var divFalse = document.createElement("div");
+            divTrue.setAttribute("aria-disabled", false);
+
+            chai.assert.isTrue(ARIA.getState(divTrue, "busy"));
+            chai.assert.equal(ARIA.getState(divTrue, "checked"), "mixed");
+            chai.assert.isFalse(ARIA.getState(divFalse, "disabled"));
+
+        });
+
+        it("should return false for unrecognised values", function () {
+
+            var divA = document.createElement("div");
+            divA.setAttribute("aria-busy", "");
+            var divB = document.createElement("div");
+            divA.setAttribute("aria-checked", "abc");
+
+            chai.assert.isFalse(ARIA.getState(divA, "busy"), "aria-busy");
+            chai.assert.isFalse(ARIA.getState(divB, "checked"), "aria-checked");
+
+        });
+
+    });
+
     describe("has", function () {
 
         it("should check whether or not an element has an attribute", function () {

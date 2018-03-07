@@ -151,7 +151,7 @@
          * is normalised (see {@link ARIA.normalise}) and the results are
          * returned in an array.
          *
-         * Uses {@link ARIA.List} and {@link ARIA.get}.
+         * Uses {@link ARIA.asRef} and {@link ARIA.get}.
          *
          * Used in {@link ARIA.hasRef}
          *
@@ -176,11 +176,42 @@
          * ARIA.getRef(element, "controls"); // -> [<div id="two">, null]
          */
         getRef(element, attribute) {
+            return ARIA.asRef(ARIA.get(element, attribute));
+        },
 
-            let list = new ARIA.List(ARIA.get(element, attribute));
-
-            return list.toArray(ARIA.getById);
-
+        /**
+         * Gets the state value of teh given attribute of the given element. The
+         * attribute name is normalised (see {@link ARIA.normalise}).
+         *
+         * Uses {@link ARIA.asState} and {@link ARIA.get}
+         *
+         * @param  {Element} element
+         *         Element whose state should be returned.
+         * @param  {String}  attribute
+         *         Attribute to get.
+         * @return {Bolean|String}
+         *         State.
+         *
+         * @example <caption>Recognised values</caption>
+         * // Assuming markup is
+         * // <div id="one"
+         * //     aria-busy="true" aria-checked="mixed" aria-disabled="false"
+         * // ></div>
+         * var div = document.getElementById("one");
+         * ARIA.getState(div, "busy"); // -> true
+         * ARIA.getState(div, "checked"); // -> "mixed"
+         * ARIA.getState(div, "disabled"); // -> false
+         *
+         * @example <caption>Missing attributes and other values are false</caption>
+         * // Assuming markup is
+         * // <div id="one" aria-label="abc" aria-checked="  true  ">
+         * var div = document.getElementById("one");
+         * ARIA.getState(div, "busy"); // -> false
+         * ARIA.getState(div, "label"); // -> false
+         * ARIA.getState(div, "checked"); // -> false
+         */
+        getState(element, attribute) {
+            return ARIA.asState(ARIA.get(element, attribute));
         },
 
         /**
