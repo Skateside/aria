@@ -247,7 +247,7 @@
      *
      * Used in {@link ARIA.set}, {@link ARIA.remove}, {@link ARIA.add},
      * {@link ARIA.hasRole}, {@link ARIA.addRole}, {@link ARIA.removeRole} and
-     * {@link ARIA.getRef}.
+     * {@link ARIA.asRef}.
      *
      * @class
      * @extends Set
@@ -379,7 +379,7 @@
      * DOM.
      *
      * Used in {@link ARIA.identify}, {@ink ARIA.refExists} and
-     * {@link ARIA.getRef}.
+     * {@link ARIA.asRef}.
      *
      * @function
      * @param    {String} id
