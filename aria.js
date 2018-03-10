@@ -192,13 +192,20 @@
 
     let normalise = function (attribute) {
 
-        let string = String(attribute)
-            .trim()
-            .toLowerCase();
+        // let string = String(attribute)
+        //     .trim()
+        //     .toLowerCase();
+        //
+        // return string.startsWith("aria-")
+        //     ? string
+        //     : `aria-${string}`;
 
-        return string.startsWith("aria-")
-            ? string
-            : `aria-${string}`;
+        let string = String(attribute)
+            .toLowerCase()
+            .replace(/^\s*(?:aria\-)?|\s*$/g, "");
+
+        return `aria-${string}`;
+
 
     };
 
@@ -517,18 +524,18 @@
 
     "use strict";
 
-    if (
-        typeof Proxy !== "function"
-        || !(/\{\s*\[native code\]\s*\}/).test(
-            Function.prototype.toString.call(Proxy)
-        )
-    ) {
-
-        throw new Error(
-            "This browser does not have Proxy - ARIA.chain() is unavailable"
-        );
-
-    }
+    // if (
+    //     typeof Proxy !== "function"
+    //     || !(/\{\s*\[native code\]\s*\}/).test(
+    //         Function.prototype.toString.call(Proxy)
+    //     )
+    // ) {
+    //
+    //     throw new Error(
+    //         "This browser does not have Proxy - ARIA.chain() is unavailable"
+    //     );
+    //
+    // }
 
     ARIA.chain = function (elements) {
 
@@ -553,5 +560,126 @@
         });
 
     };
+
+}(window.ARIA));
+
+(function (ARIA) {
+
+    "use strict";
+
+    let observer = Symbol("WAI-ARIA observer");
+
+    ARIA.extendHidden({
+
+        observer,
+
+        addEventListener(element, event, handler) {
+            element.addEventListener(event, handler);
+        },
+
+        removeEventListener(element, event, handler) {
+            element.removeEventListener(event, handler);
+        },
+
+        dispatchEvent(element, event, detail = {}) {
+
+            element.dispatchEvent(new CustomEvent(event, {
+                bubbles: true,
+                cancelable: true,
+                detail
+            }));
+
+        }
+
+    });
+
+    ARIA.extend({
+
+        makeEventName(attribute) {
+            return `wai-aria__${ARIA.normalise(attribute)}`;
+        },
+
+        startListening(element) {
+
+            if (!element[ARIA.observer]) {
+
+                let observer = new MutationObserver(function (mutationsList) {
+
+                    mutationsList.forEach(function (mutation) {
+
+                        let {
+                            type,
+                            attributeName,
+                            oldValue
+                        } = mutation;
+
+                        if (
+                            type === "attributes"
+                            && attributeName.startsWith("aria-")
+                        ) {
+
+                            ARIA.dispatchEvent(
+                                element,
+                                ARIA.makeEventName(attributeName),
+                                {
+                                    value: ARIA.getDOMAttribute(attributeName),
+                                    oldValue
+                                }
+                            );
+
+                        }
+
+                    });
+
+                });
+
+                observer.observe(element, {
+                    attributes: true,
+                    attributeOldValue: true
+                });
+
+                element[ARIA.observer] = observer;
+
+            }
+
+        },
+
+        stopListening(element) {
+
+            if (element[ARIA.observer]) {
+
+                element[ARIA.observer].disconnect();
+                delete element[ARIA.observer];
+
+            }
+
+        },
+
+        on(element, attributes, handler) {
+
+            let list = new ARIA.List(attributes);
+
+            ARIA.startListening(element);
+            list
+                .toArray(ARIA.makeEventName)
+                .forEach(function (event) {
+                    ARIA.addEventListener(element, event, handler);
+                });
+
+        },
+
+        off(element, attributes, handler) {
+
+            let list = new ARIA.List(attributes);
+
+            list
+                .toArray(ARIA.makeEventName)
+                .forEach(function (event) {
+                    ARIA.removeEventListener(element, event, handler);
+                });
+
+        }
+
+    });
 
 }(window.ARIA));

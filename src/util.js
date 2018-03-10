@@ -36,7 +36,8 @@
          * with a virtual DOM.
          *
          * Used by {@link ARIA.set}, {@link ARIA.get}, {@link ARIA.remove},
-         * {@link ARIA.add} and {@link ARIA.getRole}.
+         * {@link ARIA.add}, {@link ARIA.getRole} and
+         * {@link ARIA.startListening}.
          *
          * @private
          * @param   {Element}     element
@@ -246,8 +247,8 @@
      * values are unique.
      *
      * Used in {@link ARIA.set}, {@link ARIA.remove}, {@link ARIA.add},
-     * {@link ARIA.hasRole}, {@link ARIA.addRole}, {@link ARIA.removeRole} and
-     * {@link ARIA.asRef}.
+     * {@link ARIA.hasRole}, {@link ARIA.addRole}, {@link ARIA.removeRole},
+     * {@link ARIA.asRef}, {@link ARIA.on} and {@link ARIA.off}.
      *
      * @class
      * @extends Set
@@ -462,7 +463,7 @@
      * changing one will update the other.
      *
      * Used in {@link ARIA.set}, {@link ARIA.get}, {@link ARIA.has},
-     * {@link ARIA.remove} and {@link ARIA.add}.
+     * {@link ARIA.remove}, {@link ARIA.add} and {@link ARIA.makeEventName}.
      *
      * @memberof ARIA
      * @param    {String} attribute
@@ -520,11 +521,12 @@
         /**
          * Converts the value into elements.
          *
-         * @param  {String} value
-         *         The string representation of the value.
-         * @return {Array.<Element>}
-         *         Array containing the elements referenced. If the element
-         *         cannot be found, null will be in its place.
+         * @private
+         * @param   {String} value
+         *          The string representation of the value.
+         * @return  {Array.<Element>}
+         *          Array containing the elements referenced. If the element
+         *          cannot be found, null will be in its place.
          *
          * Uses {@link ARIA.List} and {@link ARIA.get}.
          *
@@ -555,10 +557,11 @@
          *
          * Used in {@link ARIA.getState}.
          *
-         * @param  {?} value
-         *         Value to interpret.
-         * @return {Boolean|String}
-         *         Interpreted state.
+         * @private
+         * @param   {?} value
+         *          Value to interpret.
+         * @return  {Boolean|String}
+         *          Interpreted state.
          *
          * @example
          * ARIA.asState("true"); // -> true
