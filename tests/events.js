@@ -107,7 +107,275 @@ describe("events", function () {
         it("should normalise the attribute", function () {
             chai.assert.equal(ARIA.makeEventName("busy"), "wai-aria__aria-busy");
         });
-        
+
+    });
+
+    describe("createMutationHandler", function () {
+
+        it("should return a function", function () {
+            chai.assert.isFunction(ARIA.createMutationHandler());
+        });
+
+    });
+
+    describe("handleMutation", function () {
+
+        it("should dispatch an event if a WAI-ARIA attribute changes", function () {
+
+            var div = document.createElement("div");
+            div.setAttribute("aria-busy", true);
+            var isDispatched = false;
+            ARIA.addEventListener(div, ARIA.makeEventName("busy"), function () {
+                isDispatched = true;
+            });
+
+            chai.assert.isFalse(isDispatched);
+            ARIA.handleMutation.call(div, {
+                type: "attributes",
+                attributeName: "aria-busy",
+                oldValue: null
+            });
+            chai.assert.isTrue(isDispatched);
+
+        });
+
+        it("should not dispatch an event if there was no change", function () {
+
+            var div = document.createElement("div");
+            div.setAttribute("aria-busy", true);
+            var isDispatched = false;
+            ARIA.addEventListener(div, ARIA.makeEventName("busy"), function () {
+                isDispatched = true;
+            });
+
+            chai.assert.isFalse(isDispatched);
+            ARIA.handleMutation.call(div, {
+                type: "attributes",
+                attributeName: "aria-busy",
+                oldValue: "true"
+            });
+            chai.assert.isFalse(isDispatched);
+
+        });
+
+    });
+
+    describe("startListening", function () {
+
+        it("should add a MutationObserver", function () {
+
+            var div = document.createElement("div");
+
+            chai.assert.isUndefined(div[ARIA.observer]);
+            ARIA.startListening(div);
+            chai.assert.isDefined(div[ARIA.observer]);
+            chai.assert.isTrue(div[ARIA.observer] instanceof MutationObserver);
+
+        });
+
+    });
+
+    describe("stopListening", function () {
+
+        it("should remove the MutationObserver", function () {
+
+            var div = document.createElement("div");
+            ARIA.startListening(div);
+
+            chai.assert.isDefined(div[ARIA.observer]);
+            ARIA.stopListening(div);
+            chai.assert.isUndefined(div[ARIA.observer]);
+
+        });
+
+    });
+
+    function check(done, func) {
+
+        try {
+            func();
+            done();
+        } catch (ex) {
+            done(ex);
+        }
+
+    }
+
+    describe("on", function () {
+
+        it("should listen for attribute changes", function (done) {
+
+            var div = document.createElement("div");
+            var isDispatched = false;
+            ARIA.on(div, "busy", function (e) {
+
+                isDispatched = true;
+
+                check(done, function () {
+                    chai.assert.isTrue(isDispatched);
+                });
+
+            });
+
+            chai.assert.isFalse(isDispatched);
+            div.setAttribute("aria-busy", true);
+
+        });
+
+        it("should pass values to the event argument", function (done) {
+
+            var div = document.createElement("div");
+
+            ARIA.on(div, "busy", function (e) {
+
+                try {
+
+                    chai.assert.isString(e.detail.attributeName);
+                    chai.assert.isNull(e.detail.oldValue);
+                    chai.assert.isString(e.detail.value);
+                    done();
+
+                } catch (ex) {
+                    done(ex);
+                }
+
+            });
+
+            div.setAttribute("aria-busy", true);
+
+        });
+
+        it("should be able to bind multiple events", function (done) {
+
+            var div = document.createElement("div");
+            var results = [false, false];
+
+            ARIA.on(div, "busy", function () {
+
+                results[0] = true;
+
+                if (!results.includes(false)) {
+                    done();
+                }
+
+            });
+            ARIA.on(div, "busy", function () {
+
+                results[1] = true;
+
+                if (!results.includes(false)) {
+                    done();
+                }
+
+            });
+
+            div.setAttribute("aria-busy", true);
+
+        });
+
+        it("should be able to listen to multiple attributes (string)", function (done) {
+
+            var div = document.createElement("div");
+            var results = {
+                "aria-busy": false,
+                "aria-checked": false
+            };
+
+            ARIA.on(div, "busy checked", function (e) {
+
+                try {
+
+                    results[e.detail.attributeName] = true;
+
+                    if (!Object.values(results).includes(false)) {
+                        done();
+                    }
+
+                } catch (ex) {
+                    done(ex);
+                }
+
+            });
+
+            div.setAttribute("aria-busy", true);
+            div.setAttribute("aria-checked", true);
+
+        });
+
+        it("should be able to listen to multiple attributes (array)", function (done) {
+
+            var div = document.createElement("div");
+            var results = {
+                "aria-busy": false,
+                "aria-checked": false
+            };
+
+            ARIA.on(div, ["busy", "checked"], function (e) {
+
+                try {
+
+                    results[e.detail.attributeName] = true;
+
+                    if (!Object.values(results).includes(false)) {
+                        done();
+                    }
+
+                } catch (ex) {
+                    done(ex);
+                }
+
+            });
+
+            div.setAttribute("aria-busy", true);
+            div.setAttribute("aria-checked", true);
+
+        });
+
+        it("should be able to listen to multiple attributes (object)", function (done) {
+
+            var div = document.createElement("div");
+            var results = {
+                "aria-busy": false,
+                "aria-checked": false
+            };
+            var handler = function (e) {
+
+                try {
+
+                    results[e.detail.attributeName] = true;
+
+                    if (!Object.values(results).includes(false)) {
+                        done();
+                    }
+
+                } catch (ex) {
+                    done(ex);
+                }
+
+            };
+
+            ARIA.on(div, {
+                busy: handler,
+                checked: handler
+            });
+
+            div.setAttribute("aria-busy", true);
+            div.setAttribute("aria-checked", true);
+
+        });
+
+    });
+
+    describe("off", function () {
+
+        it("should have complete documentation", function () {
+            chai.assert.isTrue(false);
+        });
+
+        it("should have some freakin' unit tests", function () {
+            chai.assert.isTrue(false);
+        });
+
     });
 
 });

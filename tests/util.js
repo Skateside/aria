@@ -106,6 +106,24 @@ describe("util", function () {
 
     });
 
+    describe("isObjectLike", function () {
+
+        it("should detect object-like things", function () {
+
+            chai.assert.isTrue(ARIA.isObjectLike({}));
+            chai.assert.isTrue(ARIA.isObjectLike({"0": "zero"}));
+
+        });
+
+        it("should reject null and array-like things", function () {
+
+            chai.assert.isFalse(ARIA.isObjectLike([]));
+            chai.assert.isFalse(ARIA.isObjectLike({"0": "zero", "length": 1}));
+
+        });
+
+    });
+
     describe("asArray", function () {
 
         it("should convert array-like structures into an array", function () {

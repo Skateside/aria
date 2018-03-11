@@ -30,9 +30,10 @@
          * can be anything that the "value" parameter can be, including
          * {@link ARIA~callback}.
          *
-         * Uses {@link ARIA.normalise}, {@link ARIA.getDOMAttribute},
-         * {@link ARIA.asArray}, {@link ARIA.asString},
-         * {@link ARIA.setDOMAttribute} and {@link ARIA.List}
+         * Uses {@link ARIA.isObjectLike}, {@link ARIA.normalise},
+         * {@link ARIA.getDOMAttribute}, {@link ARIA.asArray},
+         * {@link ARIA.asString}, {@link ARIA.setDOMAttribute} and
+         * {@link ARIA.List}
          *
          * @param {Element}       element
          *        Element to modify.
@@ -87,7 +88,7 @@
          */
         set: function set(element, attribute, value) {
 
-            if (attribute && typeof attribute === "object") {
+            if (ARIA.isObjectLike(attribute)) {
 
                 Object
                     .entries(attribute)
@@ -288,8 +289,8 @@
          * When removing part of the attribute, if the attribute value becomes
          * blank then the attribute will be removed.
          *
-         * Uses {@link ARIA.normalise}, {@link ARIA.List},
-         * {@link ARIA.asArray}, {@link ARIA.asString},
+         * Uses {@link ARIA.isObjectLike}, {@link ARIA.normalise},
+         * {@link ARIA.List}, {@link ARIA.asArray}, {@link ARIA.asString},
          * {@link ARIA.removeDOMAttribute}, {@link ARIA.getDOMAttribute}, and
          * {@link ARIA.setDOMAttribute}
          *
@@ -402,7 +403,7 @@
          */
         remove: function remove(element, attribute, value) {
 
-            if (attribute && typeof attribute === "object") {
+            if (ARIA.isObjectLike(attribute)) {
 
                 Object
                     .entries(attribute)
@@ -456,8 +457,9 @@
          * object. Any duplicated values wil be ignored so you will not be able
          * to add a value that is already in the value.
          *
-         * Uses {@link ARIA.normalise}, {@link ARIA.getDOMAttribute},
-         * {@link ARIA.List}, {@link ARIA.asArray}, {@link ARIA.asString} and
+         * Uses {@link ARIA.isObjectLike}, {@link ARIA.normalise},
+         * {@link ARIA.getDOMAttribute}, {@link ARIA.List},
+         * {@link ARIA.asArray}, {@link ARIA.asString} and
          * {@link ARIA.setDOMAttribute}.
          *
          * @param {Element}       element
@@ -529,7 +531,7 @@
          */
         add: function add(element, attribute, value) {
 
-            if (attribute && typeof attribute === "object") {
+            if (ARIA.isObjectLike(attribute)) {
 
                 Object
                     .entries(attribute)

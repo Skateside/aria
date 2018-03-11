@@ -2,9 +2,9 @@
  * @file    A library for handling WAI-ARIA attributes, the role attribute and
  *          other accessibility functions.
  * @author  James "Skateside" Long <sk85ide@hotmail.com>
- * @version 1.0.0
+ * @version <%= version %>
  */
-(function (glob) {
+(function (globalVariable) {
 
     "use strict";
 
@@ -22,9 +22,9 @@
      * @constant
      * @type     {String}
      */
-    let VERSION = "1.0.0";
+    let VERSION = "<%= version %>";
 
-    let previousAria = glob.ARIA;
+    let previousAria = globalVariable.ARIA;
     let hiddenDescriptor = {
         configurable: true,
         enumerable: false,
@@ -82,12 +82,12 @@
      */
     ARIA.noConflict = function () {
 
-        glob.ARIA = previousAria;
+        globalVariable.ARIA = previousAria;
 
         return ARIA;
 
     };
 
-    glob.ARIA = ARIA;
+    globalVariable.ARIA = ARIA;
 
 }(window));

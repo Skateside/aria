@@ -113,7 +113,8 @@
          * Checks to see if the given object is array-like. That is, it could be
          * converted into an array.
          *
-         * Used in {@link ARIA.asArray} and {@link new ARIA.List}
+         * Used in {@link ARIA.isObjectLike}, {@link ARIA.asArray} and
+         * {@link new ARIA.List}
          *
          * @private
          * @param   {?}       object
@@ -141,6 +142,34 @@
                     || typeof object[Symbol.iterator] === "function"
                 )
                 : false;
+
+        },
+
+        /**
+         * Checks to see if the given object is object-like.
+         *
+         * Used in {@link ARIA.set}, {@link ARIA.add}, {@link ARIA.remove},
+         * {@link ARIA.on} and {@link ARIA.off}.
+         *
+         * @param  {?}       object
+         *         Object to test.
+         * @return {Boolean}
+         *         true if the object is object-like, false otherwise.
+         *
+         * @example <caption>Values that return true</caption>
+         * ARIA.isObjectLike({});
+         *
+         * @example <caption>Values that return false</caption>
+         * ARIA.isObjectLike([]);
+         * ARIA.isArrayLike({"0": "zero", "1": "one", "length": 2});
+         */
+        isObjectLike(object) {
+
+            return (
+                object !== null
+                && typeof object === "object"
+                && !ARIA.isArrayLike(object)
+            );
 
         },
 
