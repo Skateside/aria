@@ -454,6 +454,26 @@ describe("util", function () {
 
         });
 
+        it("should allow us to change the default prefix", function () {
+
+            var divs = [
+                document.createElement("div"),
+                document.createElement("div")
+            ];
+            var prefix = ARIA.defaultIdentifyPrefix;
+            var createdDefault = makeId();
+
+            chai.assert.notEqual(prefix, createdDefault);
+
+            chai.assert.isTrue(ARIA.identify(divs[0]).startsWith(prefix));
+
+            ARIA.defaultIdentifyPrefix = createdDefault;
+            chai.assert.isTrue(ARIA.identify(divs[1]).startsWith(createdDefault));
+
+            ARIA.defaultIdentifyPrefix = prefix;
+
+        });
+
     });
 
     describe("normalise", function () {

@@ -1,4 +1,4 @@
-/*! aria - v0.1.0 - MIT license - 2018-3-11 */
+/*! aria - v0.1.0 - MIT license - 2018-3-12 */
 (function (globalVariable) {
     "use strict";
 
@@ -104,8 +104,8 @@
          * developer to replace this function if they want {@link ARIA} to work
          * with a virtual DOM.
          *
-         * Used by {@link ARIA.set}, {@link ARIA.remove}, {@link ARIA.add} and
-         * {@link ARIA.setRole}.
+         * Used by {@link ARIA.set}, {@link ARIA.remove}, {@link ARIA.add},
+         * {@link ARIA.setRole} and {@link ARIA.identify}.
          *
          * @private
          * @param   {Element} element
@@ -130,7 +130,7 @@
          * with a virtual DOM.
          *
          * Used by {@link ARIA.set}, {@link ARIA.get}, {@link ARIA.remove},
-         * {@link ARIA.add}, {@link ARIA.getRole} and
+         * {@link ARIA.add}, {@link ARIA.getRole}, {@link ARIA.identify} and
          * {@link ARIA.startListening}.
          *
          * @private
@@ -497,88 +497,106 @@
 
     };
 
-    /**
-     * A wrapper for getting an element by ID. This enables a developer to
-     * replace this function if they want {@link ARIA} to work with a virtual
-     * DOM.
-     *
-     * Used in {@link ARIA.identify}, {@ink ARIA.refExists} and
-     * {@link ARIA.asRef}.
-     *
-     * @function
-     * @param    {String} id
-     *           ID of the element to access.
-     * @return   {Element|null}
-     *           The element with this given ID or null if the element cannot be
-     *           found.
-     *
-     * @example
-     * // Asuming markup is this:
-     * // <div id="real"></div>
-     * ARIA.getById("real"); // -> <div id="real">
-     * ARIA.getById("not-real"); // -> null
-     */
-    ARIA.getById = document.getElementById.bind(document);
-
     let expando = 0;
 
-    /**
-     * Returns the ID of the given element. If the element does not have an ID,
-     * a unique one is generated and assigned before being returned.
-     *
-     * Uses {@link ARIA.getById}.
-     *
-     * Used in {@link ARIA.asString}.
-     *
-     * @param  {Element} element
-     *         The element whose ID should be returned.
-     * @param  {String}  [prefix="anonymous-element-"]
-     *         The prefix of the ID that could be generated.
-     * @return {String}
-     *         The element's ID.
-     *
-     * @example <caption>IDs are returned or generated and returned</caption>
-     * // Assuming markup is:
-     * // <div class="thing" id="one"></div>
-     * // <div class="thing"></div>
-     * var divs = document.querySelectorAll(".thing");
-     * ARIA.identify(divs[0]); // -> "one"
-     * ARIA.identify(divs[1]); // -> "anonymous-element-0"
-     * // Markup is now:
-     * // <div class="thing" id="one"></div>
-     * // <div class="thing" id="anonymous-element-0"></div>
-     *
-     * @example <caption>Prefix can be changed</caption>
-     * // Assuming markup is:
-     * // <div class="thing"></div>
-     * // <div class="thing"></div>
-     * var divs = document.querySelectorAll(".thing");
-     * ARIA.identify(divs[0]); // -> "anonymous-element-0"
-     * ARIA.identify(divs[1], "id-"); // -> "id-1"
-     * // Markup is now:
-     * // <div class="thing" id="anonymous-element-0"></div>
-     * // <div class="thing" id="id-1"></div>
-     */
-    ARIA.identify = function (element, prefix = "anonymous-element-") {
+    ARIA.extend(/** @lends ARIA */{
 
-        let id = element.id;
+        /**
+         * A wrapper for getting an element by ID. This enables a developer to
+         * replace this function if they want {@link ARIA} to work with a
+         * virtual DOM.
+         *
+         * Used in {@link ARIA.identify}, {@ink ARIA.refExists} and
+         * {@link ARIA.asRef}.
+         *
+         * @function
+         * @param    {String} id
+         *           ID of the element to access.
+         * @return   {Element|null}
+         *           The element with this given ID or null if the element
+         *           cannot be found.
+         *
+         * @example
+         * // Asuming markup is this:
+         * // <div id="real"></div>
+         * ARIA.getById("real"); // -> <div id="real">
+         * ARIA.getById("not-real"); // -> null
+         */
+        getById: document.getElementById.bind(document),
 
-        if (!id) {
+        /**
+         * The default element ID prefix used by {@link ARIA.identify}.
+         *
+         * Used by {@link ARIA.identify}.
+         *
+         * @type {String}
+         */
+        defaultIdentifyPrefix: "anonymous-element-",
 
-            do {
+        /**
+         * Returns the ID of the given element. If the element does not have an
+         * ID, a unique one is generated and assigned before being returned.
+         *
+         * Whenever this function is called within the {@link ARIA} library, the
+         * prefix is always set to {@link ARIA.defaultIdentifyPrefix}.
+         *
+         * Uses {@link ARIA.defaultIdentifyPrefix},
+         * {@link ARIA.getDOMAttribute}, {@link ARIA.setDOMAttribute} and
+         * {@link ARIA.getById}.
+         *
+         * Used in {@link ARIA.asString}.
+         *
+         * @param  {Element} element
+         *         The element whose ID should be returned.
+         * @param  {String}  [prefix=ARIA.defaultIdentifyPrefix]
+         *         The prefix of the ID that could be generated.
+         * @return {String}
+         *         The element's ID.
+         *
+         * @example <caption>IDs are returned or generated and returned</caption>
+         * // Assuming markup is:
+         * // <div class="thing" id="one"></div>
+         * // <div class="thing"></div>
+         * var divs = document.querySelectorAll(".thing");
+         * ARIA.identify(divs[0]); // -> "one"
+         * ARIA.identify(divs[1]); // -> "anonymous-element-0"
+         * // Markup is now:
+         * // <div class="thing" id="one"></div>
+         * // <div class="thing" id="anonymous-element-0"></div>
+         *
+         * @example <caption>Prefix can be changed</caption>
+         * // Assuming markup is:
+         * // <div class="thing"></div>
+         * // <div class="thing"></div>
+         * var divs = document.querySelectorAll(".thing");
+         * ARIA.identify(divs[0]); // -> "anonymous-element-0"
+         * ARIA.identify(divs[1], "id-"); // -> "id-1"
+         * // Markup is now:
+         * // <div class="thing" id="anonymous-element-0"></div>
+         * // <div class="thing" id="id-1"></div>
+         */
+        identify(element, prefix = ARIA.defaultIdentifyPrefix) {
 
-                id = `${prefix}${expando}`;
-                expando += 1;
+            let id = ARIA.getDOMAttribute(element, "id");
 
-            } while (ARIA.getById(id));
+            if (!id) {
 
-            element.id = id;
+                do {
+
+                    id = prefix + expando;
+                    expando += 1;
+
+                } while (ARIA.getById(id));
+
+                ARIA.setDOMAttribute(element, "id", id);
+
+            }
+
+            return id;
 
         }
 
-        return id;
-
-    };
+    });
 
     /**
      * Normalises an attribute name so that it is in lowercase and always starts
@@ -604,7 +622,7 @@
 
         let string = String(attribute)
             .toLowerCase()
-            .replace(/^(?:\s*aria\-)?|\s*$/g, "");
+            .replace(/^\s*(?:aria\-)?|\s*$/g, "");
 
         return `aria-${string}`;
 
@@ -1680,20 +1698,18 @@
 
 
 
-    let observer = Symbol("WAI-ARIA observer");
-
     ARIA.extendHidden(/** @lends ARIA */{
 
         /**
-         * The property used to contain the MutationObserver that makes the
-         * events work.
+         * The WeakMap used to store the MutationObserver that makes the events
+         * work.
          *
          * Used in {@link ARIA.startListening} and {@link ARIA.stopListening}.
          *
          * @private
-         * @type    {Symbol}
+         * @type    {WeakMap}
          */
-        observer,
+        observerStore: new WeakMap(),
 
         /**
          * A wrapper for adding an event listener to an element. The event is
@@ -1871,12 +1887,14 @@
 
     ARIA.extend(/** @lends ARIA */{
 
+        eventNamePrefix: "wai-aria__",
+
         /**
          * Creates the event name from the given attribute. The event is
          * normalised (see {@link ARIA.normalise}) and prefixed with
-         * "wai-aria__"
+         * {@link ARIA.eventNamePrefix}.
          *
-         * Uses {@link ARIA.normalise}.
+         * Uses {@link ARIA.eventNamePrefix} and {@link ARIA.normalise}.
          *
          * @param {String} attribute
          *        Attribute to convert into an event name.
@@ -1886,7 +1904,7 @@
          * ARIA.makeEventName("aria-checked"); // -> "wai-aria__aria-checked"
          */
         makeEventName(attribute) {
-            return `wai-aria__${ARIA.normalise(attribute)}`;
+            return ARIA.eventNamePrefix + ARIA.normalise(attribute);
         },
 
         /**
@@ -1897,7 +1915,7 @@
          * attribute changes, no action is taken. The MutationObserver can be
          * disconnected using {@link ARIA.stopListening}.
          *
-         * Uses {@link ARIA.observer}, {@link ARIA.createMutationHandler}.
+         * Uses {@link ARIA.observerStore}, {@link ARIA.createMutationHandler}.
          *
          * Used in {@link ARIA.on}.
          *
@@ -1914,7 +1932,9 @@
          */
         startListening(element) {
 
-            if (!element[ARIA.observer]) {
+            let store = ARIA.observerStore;
+
+            if (!store.has(element)) {
 
                 let observer = new MutationObserver(
                     ARIA.createMutationHandler(element)
@@ -1925,7 +1945,7 @@
                     attributeOldValue: true
                 });
 
-                element[ARIA.observer] = observer;
+                store.set(element, observer);
 
             }
 
@@ -1937,7 +1957,7 @@
          * place). This function isn't called in the {@link ARIA} library but it
          * may be useful for unloading elements.
          *
-         * Uses {@link ARIA.observer}.
+         * Uses {@link ARIA.observerStore}.
          *
          * @param {Element} element
          *        Element whose MutationObserver should disconnect and be
@@ -1954,10 +1974,13 @@
          */
         stopListening(element) {
 
-            if (element[ARIA.observer]) {
+            let store = ARIA.observerStore;
+            let observer = store.get(element);
 
-                element[ARIA.observer].disconnect();
-                delete element[ARIA.observer];
+            if (observer) {
+
+                observer.disconnect();
+                store.delete(element);
 
             }
 

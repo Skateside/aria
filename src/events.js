@@ -2,20 +2,18 @@
 
     "use strict";
 
-    let observer = Symbol("WAI-ARIA observer");
-
     ARIA.extendHidden(/** @lends ARIA */{
 
         /**
-         * The property used to contain the MutationObserver that makes the
-         * events work.
+         * The WeakMap used to store the MutationObserver that makes the events
+         * work.
          *
          * Used in {@link ARIA.startListening} and {@link ARIA.stopListening}.
          *
          * @private
-         * @type    {Symbol}
+         * @type    {WeakMap}
          */
-        observer,
+        observerStore: new WeakMap(),
 
         /**
          * A wrapper for adding an event listener to an element. The event is
@@ -193,12 +191,14 @@
 
     ARIA.extend(/** @lends ARIA */{
 
+        eventNamePrefix: "wai-aria__",
+
         /**
          * Creates the event name from the given attribute. The event is
          * normalised (see {@link ARIA.normalise}) and prefixed with
-         * "wai-aria__"
+         * {@link ARIA.eventNamePrefix}.
          *
-         * Uses {@link ARIA.normalise}.
+         * Uses {@link ARIA.eventNamePrefix} and {@link ARIA.normalise}.
          *
          * @param {String} attribute
          *        Attribute to convert into an event name.
@@ -208,7 +208,7 @@
          * ARIA.makeEventName("aria-checked"); // -> "wai-aria__aria-checked"
          */
         makeEventName(attribute) {
-            return `wai-aria__${ARIA.normalise(attribute)}`;
+            return ARIA.eventNamePrefix + ARIA.normalise(attribute);
         },
 
         /**
@@ -219,7 +219,7 @@
          * attribute changes, no action is taken. The MutationObserver can be
          * disconnected using {@link ARIA.stopListening}.
          *
-         * Uses {@link ARIA.observer}, {@link ARIA.createMutationHandler}.
+         * Uses {@link ARIA.observerStore}, {@link ARIA.createMutationHandler}.
          *
          * Used in {@link ARIA.on}.
          *
@@ -236,7 +236,9 @@
          */
         startListening(element) {
 
-            if (!element[ARIA.observer]) {
+            let store = ARIA.observerStore;
+
+            if (!store.has(element)) {
 
                 let observer = new MutationObserver(
                     ARIA.createMutationHandler(element)
@@ -247,7 +249,7 @@
                     attributeOldValue: true
                 });
 
-                element[ARIA.observer] = observer;
+                store.set(element, observer);
 
             }
 
@@ -259,7 +261,7 @@
          * place). This function isn't called in the {@link ARIA} library but it
          * may be useful for unloading elements.
          *
-         * Uses {@link ARIA.observer}.
+         * Uses {@link ARIA.observerStore}.
          *
          * @param {Element} element
          *        Element whose MutationObserver should disconnect and be
@@ -276,10 +278,13 @@
          */
         stopListening(element) {
 
-            if (element[ARIA.observer]) {
+            let store = ARIA.observerStore;
+            let observer = store.get(element);
 
-                element[ARIA.observer].disconnect();
-                delete element[ARIA.observer];
+            if (observer) {
+
+                observer.disconnect();
+                store.delete(element);
 
             }
 

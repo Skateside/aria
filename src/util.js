@@ -10,8 +10,8 @@
          * developer to replace this function if they want {@link ARIA} to work
          * with a virtual DOM.
          *
-         * Used by {@link ARIA.set}, {@link ARIA.remove}, {@link ARIA.add} and
-         * {@link ARIA.setRole}.
+         * Used by {@link ARIA.set}, {@link ARIA.remove}, {@link ARIA.add},
+         * {@link ARIA.setRole} and {@link ARIA.identify}.
          *
          * @private
          * @param   {Element} element
@@ -36,7 +36,7 @@
          * with a virtual DOM.
          *
          * Used by {@link ARIA.set}, {@link ARIA.get}, {@link ARIA.remove},
-         * {@link ARIA.add}, {@link ARIA.getRole} and
+         * {@link ARIA.add}, {@link ARIA.getRole}, {@link ARIA.identify} and
          * {@link ARIA.startListening}.
          *
          * @private
@@ -403,88 +403,106 @@
 
     };
 
-    /**
-     * A wrapper for getting an element by ID. This enables a developer to
-     * replace this function if they want {@link ARIA} to work with a virtual
-     * DOM.
-     *
-     * Used in {@link ARIA.identify}, {@ink ARIA.refExists} and
-     * {@link ARIA.asRef}.
-     *
-     * @function
-     * @param    {String} id
-     *           ID of the element to access.
-     * @return   {Element|null}
-     *           The element with this given ID or null if the element cannot be
-     *           found.
-     *
-     * @example
-     * // Asuming markup is this:
-     * // <div id="real"></div>
-     * ARIA.getById("real"); // -> <div id="real">
-     * ARIA.getById("not-real"); // -> null
-     */
-    ARIA.getById = document.getElementById.bind(document);
-
     let expando = 0;
 
-    /**
-     * Returns the ID of the given element. If the element does not have an ID,
-     * a unique one is generated and assigned before being returned.
-     *
-     * Uses {@link ARIA.getById}.
-     *
-     * Used in {@link ARIA.asString}.
-     *
-     * @param  {Element} element
-     *         The element whose ID should be returned.
-     * @param  {String}  [prefix="anonymous-element-"]
-     *         The prefix of the ID that could be generated.
-     * @return {String}
-     *         The element's ID.
-     *
-     * @example <caption>IDs are returned or generated and returned</caption>
-     * // Assuming markup is:
-     * // <div class="thing" id="one"></div>
-     * // <div class="thing"></div>
-     * var divs = document.querySelectorAll(".thing");
-     * ARIA.identify(divs[0]); // -> "one"
-     * ARIA.identify(divs[1]); // -> "anonymous-element-0"
-     * // Markup is now:
-     * // <div class="thing" id="one"></div>
-     * // <div class="thing" id="anonymous-element-0"></div>
-     *
-     * @example <caption>Prefix can be changed</caption>
-     * // Assuming markup is:
-     * // <div class="thing"></div>
-     * // <div class="thing"></div>
-     * var divs = document.querySelectorAll(".thing");
-     * ARIA.identify(divs[0]); // -> "anonymous-element-0"
-     * ARIA.identify(divs[1], "id-"); // -> "id-1"
-     * // Markup is now:
-     * // <div class="thing" id="anonymous-element-0"></div>
-     * // <div class="thing" id="id-1"></div>
-     */
-    ARIA.identify = function (element, prefix = "anonymous-element-") {
+    ARIA.extend(/** @lends ARIA */{
 
-        let id = element.id;
+        /**
+         * A wrapper for getting an element by ID. This enables a developer to
+         * replace this function if they want {@link ARIA} to work with a
+         * virtual DOM.
+         *
+         * Used in {@link ARIA.identify}, {@ink ARIA.refExists} and
+         * {@link ARIA.asRef}.
+         *
+         * @function
+         * @param    {String} id
+         *           ID of the element to access.
+         * @return   {Element|null}
+         *           The element with this given ID or null if the element
+         *           cannot be found.
+         *
+         * @example
+         * // Asuming markup is this:
+         * // <div id="real"></div>
+         * ARIA.getById("real"); // -> <div id="real">
+         * ARIA.getById("not-real"); // -> null
+         */
+        getById: document.getElementById.bind(document),
 
-        if (!id) {
+        /**
+         * The default element ID prefix used by {@link ARIA.identify}.
+         *
+         * Used by {@link ARIA.identify}.
+         *
+         * @type {String}
+         */
+        defaultIdentifyPrefix: "anonymous-element-",
 
-            do {
+        /**
+         * Returns the ID of the given element. If the element does not have an
+         * ID, a unique one is generated and assigned before being returned.
+         *
+         * Whenever this function is called within the {@link ARIA} library, the
+         * prefix is always set to {@link ARIA.defaultIdentifyPrefix}.
+         *
+         * Uses {@link ARIA.defaultIdentifyPrefix},
+         * {@link ARIA.getDOMAttribute}, {@link ARIA.setDOMAttribute} and
+         * {@link ARIA.getById}.
+         *
+         * Used in {@link ARIA.asString}.
+         *
+         * @param  {Element} element
+         *         The element whose ID should be returned.
+         * @param  {String}  [prefix=ARIA.defaultIdentifyPrefix]
+         *         The prefix of the ID that could be generated.
+         * @return {String}
+         *         The element's ID.
+         *
+         * @example <caption>IDs are returned or generated and returned</caption>
+         * // Assuming markup is:
+         * // <div class="thing" id="one"></div>
+         * // <div class="thing"></div>
+         * var divs = document.querySelectorAll(".thing");
+         * ARIA.identify(divs[0]); // -> "one"
+         * ARIA.identify(divs[1]); // -> "anonymous-element-0"
+         * // Markup is now:
+         * // <div class="thing" id="one"></div>
+         * // <div class="thing" id="anonymous-element-0"></div>
+         *
+         * @example <caption>Prefix can be changed</caption>
+         * // Assuming markup is:
+         * // <div class="thing"></div>
+         * // <div class="thing"></div>
+         * var divs = document.querySelectorAll(".thing");
+         * ARIA.identify(divs[0]); // -> "anonymous-element-0"
+         * ARIA.identify(divs[1], "id-"); // -> "id-1"
+         * // Markup is now:
+         * // <div class="thing" id="anonymous-element-0"></div>
+         * // <div class="thing" id="id-1"></div>
+         */
+        identify(element, prefix = ARIA.defaultIdentifyPrefix) {
 
-                id = `${prefix}${expando}`;
-                expando += 1;
+            let id = ARIA.getDOMAttribute(element, "id");
 
-            } while (ARIA.getById(id));
+            if (!id) {
 
-            element.id = id;
+                do {
+
+                    id = prefix + expando;
+                    expando += 1;
+
+                } while (ARIA.getById(id));
+
+                ARIA.setDOMAttribute(element, "id", id);
+
+            }
+
+            return id;
 
         }
 
-        return id;
-
-    };
+    });
 
     /**
      * Normalises an attribute name so that it is in lowercase and always starts
@@ -510,7 +528,7 @@
 
         let string = String(attribute)
             .toLowerCase()
-            .replace(/^(?:\s*aria\-)?|\s*$/g, "");
+            .replace(/^\s*(?:aria\-)?|\s*$/g, "");
 
         return `aria-${string}`;
 

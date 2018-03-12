@@ -100,12 +100,23 @@ describe("events", function () {
 
     describe("makeEventName", function () {
 
+        var prefix = ARIA.eventNamePrefix;
+
         it("should prefix the attribute", function () {
-            chai.assert.equal(ARIA.makeEventName("aria-busy"), "wai-aria__aria-busy");
+            chai.assert.equal(ARIA.makeEventName("aria-busy"), prefix + "aria-busy");
         });
 
         it("should normalise the attribute", function () {
-            chai.assert.equal(ARIA.makeEventName("busy"), "wai-aria__aria-busy");
+            chai.assert.equal(ARIA.makeEventName("busy"), prefix + "aria-busy");
+        });
+
+        it("should allow us to set the prefix", function () {
+
+            var newPrefix = btoa(Date.now() * Math.random());
+            ARIA.eventNamePrefix = newPrefix;
+            chai.assert.equal(ARIA.makeEventName("busy"), newPrefix + "aria-busy");
+            ARIA.eventNamePrefix = prefix;
+
         });
 
     });
@@ -166,10 +177,10 @@ describe("events", function () {
 
             var div = document.createElement("div");
 
-            chai.assert.isUndefined(div[ARIA.observer]);
+            chai.assert.isUndefined(ARIA.observerStore.get(div));
             ARIA.startListening(div);
-            chai.assert.isDefined(div[ARIA.observer]);
-            chai.assert.isTrue(div[ARIA.observer] instanceof MutationObserver);
+            chai.assert.isDefined(ARIA.observerStore.get(div));
+            chai.assert.isTrue(ARIA.observerStore.get(div) instanceof MutationObserver);
 
         });
 
@@ -182,9 +193,9 @@ describe("events", function () {
             var div = document.createElement("div");
             ARIA.startListening(div);
 
-            chai.assert.isDefined(div[ARIA.observer]);
+            chai.assert.isDefined(ARIA.observerStore.get(div));
             ARIA.stopListening(div);
-            chai.assert.isUndefined(div[ARIA.observer]);
+            chai.assert.isUndefined(ARIA.observerStore.get(div));
 
         });
 
