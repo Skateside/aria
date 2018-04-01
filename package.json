@@ -22,16 +22,19 @@
     "bugs": {
         "url": "https://github.com/Skateside/aria/issues"
     },
-    "dependencies": {
+    "devDependencies": {
         "babel-core": "^6.26.0",
         "babel-preset-env": "^1.6.1",
         "chai": "^4.1.2",
         "gulp": "^3.9.1",
         "gulp-babel": "^7.0.1",
         "gulp-concat-util": "^0.5.5",
+        "gulp-docdown": "^0.1.11",
         "gulp-minify": "^2.1.0",
         "gulp-mocha-phantomjs": "^0.12.2",
+        "gulp-rename": "^1.2.2",
         "gulp-sourcemaps": "^2.6.4",
-        "mocha": "^5.0.1"
+        "mocha": "^5.0.1",
+        "run-sequence": "^2.2.1"
     }
 }

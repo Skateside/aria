@@ -1,21 +1,39 @@
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 /*! aria - v0.1.0 - MIT license - 2018-4-1 */
 (function (globalVariable) {
     "use strict";
 
-/**
- * @file    A library for handling WAI-ARIA attributes, the role attribute and
- *          other accessibility functions.
- * @author  James "Skateside" Long <sk85ide@hotmail.com>
- * @version 0.1.0
- */
-
+    /**
+     * @file    A library for handling WAI-ARIA attributes, the role attribute and
+     *          other accessibility functions.
+     * @author  James "Skateside" Long <sk85ide@hotmail.com>
+     * @version 0.1.0
+     */
 
     /**
      * Namespace for the WAI-ARIA functions.
      *
      * @namespace
      */
-    let ARIA = {};
+
+    var ARIA = {};
 
     /**
      * The current version. This is written in Semantic Versioning (SemVer).
@@ -24,10 +42,10 @@
      * @constant
      * @type     {String}
      */
-    let VERSION = "0.1.0";
+    var VERSION = "0.1.0";
 
-    let previousAria = globalVariable.ARIA;
-    let hiddenDescriptor = {
+    var previousAria = globalVariable.ARIA;
+    var hiddenDescriptor = {
         configurable: true,
         enumerable: false,
         writable: true
@@ -49,18 +67,13 @@
      */
     function extendHidden(methods) {
 
-        Object
-            .entries(methods)
-            .forEach(function ([name, value]) {
+        Object.entries(methods).forEach(function (_ref) {
+            var _ref2 = _slicedToArray(_ref, 2),
+                name = _ref2[0],
+                value = _ref2[1];
 
-                Object.defineProperty(
-                    ARIA,
-                    name,
-                    Object.assign({value}, hiddenDescriptor)
-                );
-
-            });
-
+            Object.defineProperty(ARIA, name, Object.assign({ value: value }, hiddenDescriptor));
+        });
     }
 
     Object.defineProperty(ARIA, "VERSION", {
@@ -71,8 +84,8 @@
     });
 
     extendHidden({
-        extend,
-        extendHidden
+        extend: extend,
+        extendHidden: extendHidden
     });
 
     /**
@@ -87,17 +100,12 @@
         globalVariable.ARIA = previousAria;
 
         return ARIA;
-
     };
 
     globalVariable.ARIA = ARIA;
 
-
-
-
-
     // Wrappers for DOM attribute manipulation.
-    ARIA.extendHidden(/** @lends ARIA */{
+    ARIA.extendHidden( /** @lends ARIA */{
 
         /**
          * A wrapper for setting an attribute on an element. This enables a
@@ -120,9 +128,10 @@
          * ARIA.setDOMAttribute(div, "class", "one");
          * div; // -> <div id="div" class="one");
          */
-        setDOMAttribute(element, attribute, value) {
+        setDOMAttribute: function setDOMAttribute(element, attribute, value) {
             element.setAttribute(attribute, value);
         },
+
 
         /**
          * A wrapper for getting the attribute on an element. This enables a
@@ -146,9 +155,10 @@
          * var div = document.getElementById("div"); // -> <div id="div">
          * ARIA.getDOMAttribute(div, "id"); // -> "div"
          */
-        getDOMAttribute(element, attribute) {
+        getDOMAttribute: function getDOMAttribute(element, attribute) {
             return element.getAttribute(attribute);
         },
+
 
         /**
          * A wrapper for checking whether or not an element has the given
@@ -171,9 +181,10 @@
          * ARIA.hasDOMAttribute(div, "class"); // -> false
          * ARIA.hasDOMAttribute(div, "id"); // -> true
          */
-        hasDOMAttribute(element, attribute) {
+        hasDOMAttribute: function hasDOMAttribute(element, attribute) {
             return element.hasAttribute(attribute);
         },
+
 
         /**
          * A wrapper for checking whether or not an element has the given
@@ -194,14 +205,13 @@
          * ARIA.removeDOMAttribute(div, "id");
          * ARIA.hasDOMAttribute(div, "id"); // -> false
          */
-        removeDOMAttribute(element, attribute) {
+        removeDOMAttribute: function removeDOMAttribute(element, attribute) {
             element.removeAttribute(attribute);
         }
-
     });
 
     // Helper functions that we'll ue elsewhere.
-    ARIA.extendHidden(/** @lends ARIA */{
+    ARIA.extendHidden( /** @lends ARIA */{
 
         /**
          * Checks to see if the given object is array-like. That is, it could be
@@ -228,16 +238,11 @@
          * ARIA.isArrayLike(document.querySelector("a"));
          * ARIA.isArrayLike({"0": "zero", "1": "one"});
          */
-        isArrayLike(object) {
+        isArrayLike: function isArrayLike(object) {
 
-            return object
-                ? (
-                    typeof object.length === "number"
-                    || typeof object[Symbol.iterator] === "function"
-                )
-                : false;
-
+            return object ? typeof object.length === "number" || typeof object[Symbol.iterator] === "function" : false;
         },
+
 
         /**
          * Checks to see if the given object is object-like.
@@ -257,15 +262,11 @@
          * ARIA.isObjectLike([]);
          * ARIA.isArrayLike({"0": "zero", "1": "one", "length": 2});
          */
-        isObjectLike(object) {
+        isObjectLike: function isObjectLike(object) {
 
-            return (
-                object !== null
-                && typeof object === "object"
-                && !ARIA.isArrayLike(object)
-            );
-
+            return object !== null && (typeof object === "undefined" ? "undefined" : _typeof(object)) === "object" && !ARIA.isArrayLike(object);
         },
+
 
         /**
          * Returns an array containing the given object unless the object can be
@@ -298,15 +299,11 @@
          * ARIA.asArray(undefined); // -> []
          * ARIA.asArray(); // -> []
          */
-        asArray(object) {
+        asArray: function asArray(object) {
 
-            return (object === null || object === undefined)
-                ? []
-                : (typeof object !== "string" && ARIA.isArrayLike(object))
-                    ? [...object]
-                    : [object];
-
+            return object === null || object === undefined ? [] : typeof object !== "string" && ARIA.isArrayLike(object) ? [].concat(_toConsumableArray(object)) : [object];
         },
+
 
         /**
          * Checks to see if the given object is a Node.
@@ -330,9 +327,10 @@
          * ARIA.isNode(null);
          * ARIA.isNode(document.querySelectorAll("a"));
          */
-        isNode(object) {
+        isNode: function isNode(object) {
             return object instanceof Node;
         },
+
 
         /**
          * Converts the given object into a string. Special consideration is
@@ -355,14 +353,10 @@
          * ARIA.asString({toString: function () { return "def"; }}); // -> "def"
          * ARIA.asString(document.getElementById("ghi")); // -> "ghi"
          */
-        asString(object) {
+        asString: function asString(object) {
 
-            return ARIA.isNode(object)
-                ? ARIA.identify(object)
-                : String(object);
-
+            return ARIA.isNode(object) ? ARIA.identify(object) : String(object);
         }
-
     });
 
     /**
@@ -376,7 +370,8 @@
      * @class
      * @extends Set
      */
-    ARIA.List = class extends Set {
+    ARIA.List = function (_Set) {
+        _inherits(_class, _Set);
 
         /**
          * The constructor is designed to take a list of values or the value of
@@ -394,22 +389,19 @@
          * var list2 = new ARIA.List("one two three");
          * var list3 = new ARIA.List(["one", "two", "three"]);
          */
-        constructor(value) {
+        function _class(value) {
+            _classCallCheck(this, _class);
 
-            let iterable = ARIA.asArray(value);
+            var iterable = ARIA.asArray(value);
 
             if (iterable.length === 1 && typeof iterable[0] === "string") {
 
-                let string = iterable[0].trim();
+                var string = iterable[0].trim();
 
-                iterable = string
-                    ? string.split(/\s+/)
-                    : [];
-
+                iterable = string ? string.split(/\s+/) : [];
             }
 
-            super(iterable);
-
+            return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, iterable));
         }
 
         /**
@@ -420,69 +412,92 @@
          * @param {...String} values
          *        Values to add to the list.
          */
-        add(...values) {
 
-            values.forEach(
-                (value) => super.add.call(this, String(value).trim())
-            );
 
-        }
+        _createClass(_class, [{
+            key: "add",
+            value: function add() {
+                var _this2 = this;
 
-        /**
-         * Removes one or more values from the list. Values are trimmed before
-         * being removed.
-         *
-         * @param {...String} values
-         *        Values to remove from the list.
-         */
-        delete(...values) {
+                for (var _len = arguments.length, values = Array(_len), _key = 0; _key < _len; _key++) {
+                    values[_key] = arguments[_key];
+                }
 
-            values.forEach(
-                (value) => super.delete.call(this, String(value).trim())
-            );
+                values.forEach(function (value) {
+                    return _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "add", _this2).call(_this2, String(value).trim());
+                });
+            }
 
-        }
+            /**
+             * Removes one or more values from the list. Values are trimmed before
+             * being removed.
+             *
+             * @param {...String} values
+             *        Values to remove from the list.
+             */
 
-        /**
-         * Converts the current list into an array of values. Optionally, the
-         * values can be modified by pasing a mapping function and a context.
-         *
-         * @param  {Function}       [handler]
-         *         Optional function for converting the entries in the list.
-         * @param  {?}              [context]
-         *         Optional context for the optional function.
-         * @return {Array.<String>}
-         *         Array of the values.
-         *
-         * @example
-         * var list = new ARIA.List("one two three");
-         * list.toArray(); // -> ["one", "two", "three"]
-         * list.toArray((v) => v.toUpperCase()); // -> ["ONE", "TWO", "THREE"]
-         */
-        toArray(handler, context) {
-            return Array.from(this, handler, context);
-        }
+        }, {
+            key: "delete",
+            value: function _delete() {
+                var _this3 = this;
 
-        /**
-         * Converts the list into a string of space-separated values.
-         *
-         * @return {String}
-         *         Space-separated string of values.
-         *
-         * @example
-         * var list = new ARIA.List("one two three");
-         * list.toString(); // -> "one two three"
-         * String(list); // -> "one two three"
-         */
-        toString() {
-            return this.toArray().join(" ");
-        }
+                for (var _len2 = arguments.length, values = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+                    values[_key2] = arguments[_key2];
+                }
 
-    };
+                values.forEach(function (value) {
+                    return _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "delete", _this3).call(_this3, String(value).trim());
+                });
+            }
 
-    let expando = 0;
+            /**
+             * Converts the current list into an array of values. Optionally, the
+             * values can be modified by pasing a mapping function and a context.
+             *
+             * @param  {Function}       [handler]
+             *         Optional function for converting the entries in the list.
+             * @param  {?}              [context]
+             *         Optional context for the optional function.
+             * @return {Array.<String>}
+             *         Array of the values.
+             *
+             * @example
+             * var list = new ARIA.List("one two three");
+             * list.toArray(); // -> ["one", "two", "three"]
+             * list.toArray((v) => v.toUpperCase()); // -> ["ONE", "TWO", "THREE"]
+             */
 
-    ARIA.extend(/** @lends ARIA */{
+        }, {
+            key: "toArray",
+            value: function toArray(handler, context) {
+                return Array.from(this, handler, context);
+            }
+
+            /**
+             * Converts the list into a string of space-separated values.
+             *
+             * @return {String}
+             *         Space-separated string of values.
+             *
+             * @example
+             * var list = new ARIA.List("one two three");
+             * list.toString(); // -> "one two three"
+             * String(list); // -> "one two three"
+             */
+
+        }, {
+            key: "toString",
+            value: function toString() {
+                return this.toArray().join(" ");
+            }
+        }]);
+
+        return _class;
+    }(Set);
+
+    var expando = 0;
+
+    ARIA.extend( /** @lends ARIA */{
 
         /**
          * A wrapper for getting an element by ID. This enables a developer to
@@ -558,9 +573,11 @@
          * // <div class="thing" id="anonymous-element-0"></div>
          * // <div class="thing" id="id-1"></div>
          */
-        identify(element, prefix = ARIA.defaultIdentifyPrefix) {
+        identify: function identify(element) {
+            var prefix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ARIA.defaultIdentifyPrefix;
 
-            let id = ARIA.getDOMAttribute(element, "id");
+
+            var id = ARIA.getDOMAttribute(element, "id");
 
             if (!id) {
 
@@ -568,17 +585,13 @@
 
                     id = prefix + expando;
                     expando += 1;
-
                 } while (ARIA.getById(id));
 
                 ARIA.setDOMAttribute(element, "id", id);
-
             }
 
             return id;
-
         }
-
     });
 
     /**
@@ -601,29 +614,24 @@
      * ARIA.normalise("  busy  "); // -> "aria-busy"
      * ARIA.normalise("BUSY"); // -> "aria-busy"
      */
-    let normalise = function (attribute) {
+    var normalise = function normalise(attribute) {
 
-        let string = String(attribute)
-            .toLowerCase()
-            .replace(/^\s*(?:aria\-)?|\s*$/g, "");
+        var string = String(attribute).toLowerCase().replace(/^\s*(?:aria\-)?|\s*$/g, "");
 
-        return `aria-${string}`;
-
+        return "aria-" + string;
     };
 
-    let normaliseDescriptor = {
+    var normaliseDescriptor = {
 
         configurable: false,
         enumerable: true,
 
-        get() {
+        get: function get() {
             return normalise;
         },
-
-        set(normaliser) {
+        set: function set(normaliser) {
             normalise = normaliser;
         }
-
     };
 
     Object.defineProperties(ARIA, {
@@ -640,7 +648,7 @@
 
     });
 
-    ARIA.extendHidden(/** @lends ARIA */{
+    ARIA.extendHidden( /** @lends ARIA */{
 
         /**
          * Converts the value into elements.
@@ -667,13 +675,13 @@
          * // <div id="one"></div>
          * ARIA.asRef("one two one"); // -> [<div id="one">, null]
          */
-        asRef(value) {
+        asRef: function asRef(value) {
 
-            let list = new ARIA.List(value);
+            var list = new ARIA.List(value);
 
             return list.toArray(ARIA.getById);
-
         },
+
 
         /**
          * Converts the value into a boolean or string. This function is
@@ -703,22 +711,11 @@
          * ARIA.asState(""); // -> false
          * ARIA.asState("  true  "); // -> false
          */
-        asState(value) {
+        asState: function asState(value) {
 
-            return (value === "mixed" || typeof value === "boolean")
-                ? value
-                : typeof value === "string"
-                    ? value === "true"
-                    : false;
-
+            return value === "mixed" || typeof value === "boolean" ? value : typeof value === "string" ? value === "true" : false;
         }
-
     });
-
-
-
-
-
 
     /**
      * This callback can be used to create the value that a {@link ARIA} method
@@ -739,7 +736,7 @@
      *           Value that will be used by the {@link ARIA} method.
      */
 
-    ARIA.extend(/** @lends ARIA */{
+    ARIA.extend( /** @lends ARIA */{
 
         /**
          * Sets one or more WAI-ARIA attributes on the given element. Attribute
@@ -808,32 +805,26 @@
 
             if (ARIA.isObjectLike(attribute)) {
 
-                Object
-                    .entries(attribute)
-                    .forEach(([attr, val]) => set(element, attr, val));
+                Object.entries(attribute).forEach(function (_ref3) {
+                    var _ref4 = _slicedToArray(_ref3, 2),
+                        attr = _ref4[0],
+                        val = _ref4[1];
 
+                    return set(element, attr, val);
+                });
             } else {
 
-                let attr = ARIA.normalise(attribute);
+                var attr = ARIA.normalise(attribute);
 
                 if (typeof value === "function") {
 
-                    value = value(
-                        element,
-                        ARIA.getDOMAttribute(element, attr),
-                        attr
-                    );
-
+                    value = value(element, ARIA.getDOMAttribute(element, attr), attr);
                 }
 
-                let list = new ARIA.List(
-                    ARIA.asArray(value).map(ARIA.asString)
-                );
+                var list = new ARIA.List(ARIA.asArray(value).map(ARIA.asString));
 
                 ARIA.setDOMAttribute(element, attr, list);
-
             }
-
         },
 
         /**
@@ -861,9 +852,10 @@
          * ARIA.get(div, "hidden"); // -> ""
          * ARIA.get(div, "checked"); // -> null
          */
-        get(element, attribute) {
+        get: function get(element, attribute) {
             return ARIA.getDOMAttribute(element, ARIA.normalise(attribute));
         },
+
 
         /**
          * Gets the references from the given element's attribute. The attribute
@@ -894,9 +886,10 @@
          * // <div id="two"></div>
          * ARIA.getRef(element, "controls"); // -> [<div id="two">, null]
          */
-        getRef(element, attribute) {
+        getRef: function getRef(element, attribute) {
             return ARIA.asRef(ARIA.get(element, attribute));
         },
+
 
         /**
          * Gets the state value of teh given attribute of the given element. The
@@ -929,9 +922,10 @@
          * ARIA.getState(div, "label"); // -> false
          * ARIA.getState(div, "checked"); // -> false
          */
-        getState(element, attribute) {
+        getState: function getState(element, attribute) {
             return ARIA.asState(ARIA.get(element, attribute));
         },
+
 
         /**
          * Checks to see if the given element has the attribute. The attribute
@@ -955,9 +949,10 @@
          * ARIA.has(div, "busy"); // -> true
          * ARIA.has(div, "checked"); // -> false
          */
-        has(element, attribute) {
+        has: function has(element, attribute) {
             return ARIA.hasDOMAttribute(element, ARIA.normalise(attribute));
         },
+
 
         /**
          * Checks to see that the given element has all the references defined
@@ -984,14 +979,11 @@
          * ARIA.hasRef(div, "controls"); // -> false
          * ARIA.hasRef(div, "describedby"); // -> false
          */
-        hasRef(element, attribute) {
+        hasRef: function hasRef(element, attribute) {
 
-            return (
-                ARIA.has(element, attribute)
-                && !ARIA.getRef(element, attribute).includes(null)
-            );
-
+            return ARIA.has(element, attribute) && !ARIA.getRef(element, attribute).includes(null);
         },
+
 
         /**
          * Either removes the attribute from the given element or removes a part
@@ -1123,47 +1115,41 @@
 
             if (ARIA.isObjectLike(attribute)) {
 
-                Object
-                    .entries(attribute)
-                    .forEach(([attr, val]) => remove(element, attr, val));
+                Object.entries(attribute).forEach(function (_ref5) {
+                    var _ref6 = _slicedToArray(_ref5, 2),
+                        attr = _ref6[0],
+                        val = _ref6[1];
 
+                    return remove(element, attr, val);
+                });
             } else {
 
-                let normalised = ARIA.normalise(attribute);
+                var normalised = ARIA.normalise(attribute);
 
                 if (value === null || value === undefined) {
                     ARIA.removeDOMAttribute(element, normalised);
                 } else {
 
-                    let current = ARIA.getDOMAttribute(element, normalised);
+                    var current = ARIA.getDOMAttribute(element, normalised);
 
                     if (typeof value === "function") {
 
-                        remove(
-                            element,
-                            normalised,
-                            value(element, current, normalised)
-                        );
-
+                        remove(element, normalised, value(element, current, normalised));
                     } else {
 
-                        let list = new ARIA.List(current);
-                        let values = ARIA.asArray(value).map(ARIA.asString);
+                        var list = new ARIA.List(current);
+                        var values = ARIA.asArray(value).map(ARIA.asString);
 
-                        list.delete(...values);
+                        list.delete.apply(list, _toConsumableArray(values));
 
                         if (list.size) {
                             ARIA.setDOMAttribute(element, normalised, list);
                         } else {
                             ARIA.removeDOMAttribute(element, normalised);
                         }
-
                     }
-
                 }
-
             }
-
         },
 
         /**
@@ -1251,36 +1237,33 @@
 
             if (ARIA.isObjectLike(attribute)) {
 
-                Object
-                    .entries(attribute)
-                    .forEach(([attr, val]) => add(element, attr, val));
+                Object.entries(attribute).forEach(function (_ref7) {
+                    var _ref8 = _slicedToArray(_ref7, 2),
+                        attr = _ref8[0],
+                        val = _ref8[1];
 
+                    return add(element, attr, val);
+                });
             } else {
 
-                let attr = ARIA.normalise(attribute);
-                let current = ARIA.getDOMAttribute(element, attr);
+                var attr = ARIA.normalise(attribute);
+                var current = ARIA.getDOMAttribute(element, attr);
 
                 if (typeof value === "function") {
                     value = value(element, current, attr);
                 }
 
-                let list = new ARIA.List(current);
-                let values = ARIA.asArray(value).map(ARIA.asString);
+                var list = new ARIA.List(current);
+                var values = ARIA.asArray(value).map(ARIA.asString);
 
-                list.add(...values);
+                list.add.apply(list, _toConsumableArray(values));
                 ARIA.setDOMAttribute(element, attr, list);
-
             }
-
         }
 
     });
 
-
-
-
-
-    ARIA.extend(/** @lends ARIA */{
+    ARIA.extend( /** @lends ARIA */{
 
         /**
          * Sets the role of the given element.
@@ -1303,9 +1286,10 @@
          * // Now markup is
          * // <div id="one" role="presentation"></div>
          */
-        setRole(element, role) {
+        setRole: function setRole(element, role) {
             ARIA.setDOMAttribute(element, "role", role);
         },
+
 
         /**
          * Gets the role of the given element.
@@ -1328,9 +1312,10 @@
          * ARIA.getRole(document.getElementById("one")); // -> "tablist"
          * ARIA.getRole(document.getElementById("two")); // -> null
          */
-        getRole(element) {
+        getRole: function getRole(element) {
             return ARIA.getDOMAttribute(element, "role");
         },
+
 
         /**
          * Checks to see if the given element has a role. If the role is
@@ -1362,21 +1347,20 @@
          * ARIA.hasRole(div, "tab"); // -> false
          * ARIA.hasRole(div, "presentation"); // -> false
          */
-        hasRole(element, role) {
+        hasRole: function hasRole(element, role) {
 
-            let has = ARIA.hasDOMAttribute(element, "role");
+            var has = ARIA.hasDOMAttribute(element, "role");
 
             if (role && has) {
 
-                let list = new ARIA.List(ARIA.getRole(element));
+                var list = new ARIA.List(ARIA.getRole(element));
 
                 has = list.has(role);
-
             }
 
             return has;
-
         },
+
 
         /**
          * Adds one or more roles to the given element. If the element didn't
@@ -1420,14 +1404,18 @@
          * // Markup is now:
          * // <div id="one" role="tablist presentation"></div>
          */
-        addRole(element, ...roles) {
+        addRole: function addRole(element) {
 
-            let list = new ARIA.List(ARIA.getRole(element));
+            var list = new ARIA.List(ARIA.getRole(element));
 
-            list.add(...roles);
+            for (var _len3 = arguments.length, roles = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+                roles[_key3 - 1] = arguments[_key3];
+            }
+
+            list.add.apply(list, _toConsumableArray(roles));
             ARIA.setRole(element, list);
-
         },
+
 
         /**
          * Removes one or more roles from the given element. If no roles are
@@ -1465,46 +1453,34 @@
          * <div id="one"></div>
          * <div id="two"></div>
          */
-        removeRole: function removeRole(element, ...roles) {
+        removeRole: function removeRole(element) {
+            for (var _len4 = arguments.length, roles = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
+                roles[_key4 - 1] = arguments[_key4];
+            }
 
             if (roles.length) {
 
-                let list = new ARIA.List(ARIA.getRole(element));
+                var list = new ARIA.List(ARIA.getRole(element));
 
-                list.delete(...roles);
+                list.delete.apply(list, roles);
 
                 if (list.size) {
                     ARIA.setRole(element, list);
                 } else {
                     removeRole(element);
                 }
-
             } else {
                 ARIA.removeDOMAttribute(element, "role");
             }
-
         }
 
     });
 
+    var focusable = ["a[href]", "button", "iframe", "input:not([type=\"hidden\"]):not([type=\"file\"])", "select", "textarea", "[tabindex]", "[contentEditable=\"true\"]"].map(function (sel) {
+        return sel + ":not([disabled]):not([hidden]):not([inert])";
+    }).join(",");
 
-
-
-
-    let focusable = [
-            "a[href]",
-            "button",
-            "iframe",
-            "input:not([type=\"hidden\"]):not([type=\"file\"])",
-            "select",
-            "textarea",
-            "[tabindex]",
-            "[contentEditable=\"true\"]"
-        ]
-        .map((sel) => `${sel}:not([disabled]):not([hidden]):not([inert])`)
-        .join(",");
-
-    ARIA.extendHidden(/** @lends ARIA */{
+    ARIA.extendHidden( /** @lends ARIA */{
 
         /**
          * A wrapped for matching an element with a CSS selector.
@@ -1526,13 +1502,12 @@
          * ARIA.is(div, "[id]"); // -> true
          * ARIA.is(div, ".class"); // -> false
          */
-        is(element, selector) {
+        is: function is(element, selector) {
             return element.matches(selector);
         }
-
     });
 
-    ARIA.extend(/** @lends ARIA */{
+    ARIA.extend( /** @lends ARIA */{
 
         /**
          * A CSS selector that matches elements which are already focusable.
@@ -1541,7 +1516,7 @@
          *
          * @type {String}
          */
-        focusable,
+        focusable: focusable,
 
         /**
          * Makes the given element focusable. If the isTabbable flag is set to
@@ -1588,27 +1563,16 @@
          * // <button type="button" class=".one"></button>
          * // <input type="text" class=".one">
          */
-        makeFocusable(element, isTabbable = false) {
+        makeFocusable: function makeFocusable(element) {
+            var isTabbable = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
 
             if (!ARIA.is(element, ARIA.focusable)) {
 
-                ARIA.setDOMAttribute(
-                    element,
-                    "tabindex",
-                    isTabbable
-                        ? 0
-                        : -1
-                );
-
+                ARIA.setDOMAttribute(element, "tabindex", isTabbable ? 0 : -1);
             }
-
         }
-
     });
-
-
-
-
 
     /**
      * A helper function that chains together methods and can work with a
@@ -1657,31 +1621,25 @@
 
         return new Proxy(ARIA, {
 
-            get: function (target, name) {
+            get: function get(target, name) {
 
-                return typeof target[name] === "function"
-                    ? function (...args) {
-
-                        ARIA.asArray(elements).forEach(function (element) {
-                            target[name](element, ...args);
-                        });
-
-                        return this;
-
+                return typeof target[name] === "function" ? function () {
+                    for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+                        args[_key5] = arguments[_key5];
                     }
-                    : target[name];
 
+                    ARIA.asArray(elements).forEach(function (element) {
+                        target[name].apply(target, [element].concat(args));
+                    });
+
+                    return this;
+                } : target[name];
             }
 
         });
-
     };
 
-
-
-
-
-    ARIA.extendHidden(/** @lends ARIA */{
+    ARIA.extendHidden( /** @lends ARIA */{
 
         /**
          * The WeakMap used to store the MutationObserver that makes the events
@@ -1719,9 +1677,10 @@
          * });
          * // Event listener is now bound.
          */
-        addEventListener(element, event, handler) {
+        addEventListener: function addEventListener(element, event, handler) {
             element.addEventListener(event, handler);
         },
+
 
         /**
          * A wrapper for removing an event listener from an element. The event
@@ -1751,9 +1710,10 @@
          * ARIA.removeEventListener(one, "click", handler);
          * // Event listener is now un-bound.
          */
-        removeEventListener(element, event, handler) {
+        removeEventListener: function removeEventListener(element, event, handler) {
             element.removeEventListener(event, handler);
         },
+
 
         /**
          * A wrapper for dispatching an event on an element. The dispatched
@@ -1788,15 +1748,17 @@
          * });
          * ARIA.dispatchEvent(div, "test" {data: "abc"}); // logs: "abc"
          */
-        dispatchEvent(element, event, detail = {}) {
+        dispatchEvent: function dispatchEvent(element, event) {
+            var detail = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
 
             element.dispatchEvent(new CustomEvent(event, {
                 bubbles: true,
                 cancelable: true,
-                detail
+                detail: detail
             }));
-
         },
+
 
         /**
          * Creates the function that will handle the mutations detected by a
@@ -1812,13 +1774,13 @@
          * @return  {Function}
          *          Function that will handle mutations.
          */
-        createMutationHandler(element) {
+        createMutationHandler: function createMutationHandler(element) {
 
-            return (mutationList) => {
-                mutationList.forEach(ARIA.handleMutation, element)
+            return function (mutationList) {
+                mutationList.forEach(ARIA.handleMutation, element);
             };
-
         },
+
 
         /**
          * Checks to see whether the mutation was aa WAI-ARIA attribute and
@@ -1836,39 +1798,32 @@
          * @param   {MutationRecord} mutation
          *          Object with information about the mutation.
          */
-        handleMutation(mutation) {
+        handleMutation: function handleMutation(mutation) {
+            var type = mutation.type,
+                attributeName = mutation.attributeName,
+                oldValue = mutation.oldValue;
 
-            let {
-                type,
-                attributeName,
-                oldValue
-            } = mutation;
-            let element = this;
+            var element = this;
 
             if (type === "attributes" && attributeName.startsWith("aria-")) {
 
-                let value = ARIA.getDOMAttribute(element, attributeName);
+                var value = ARIA.getDOMAttribute(element, attributeName);
 
                 if (value !== oldValue) {
 
-                    let event = ARIA.makeEventName(attributeName);
+                    var event = ARIA.makeEventName(attributeName);
 
                     ARIA.dispatchEvent(element, event, {
-                        attributeName,
-                        value,
-                        oldValue
+                        attributeName: attributeName,
+                        value: value,
+                        oldValue: oldValue
                     });
-
                 }
-
             }
-
         }
-
-
     });
 
-    ARIA.extend(/** @lends ARIA */{
+    ARIA.extend( /** @lends ARIA */{
 
         eventNamePrefix: "wai-aria__",
 
@@ -1886,9 +1841,10 @@
          * ARIA.makeEventName("busy"); // -> "wai-aria__aria-busy"
          * ARIA.makeEventName("aria-checked"); // -> "wai-aria__aria-checked"
          */
-        makeEventName(attribute) {
+        makeEventName: function makeEventName(attribute) {
             return ARIA.eventNamePrefix + ARIA.normalise(attribute);
         },
+
 
         /**
          * Starts listening to WAI-ARIA attribute changes and dispatching an
@@ -1913,15 +1869,13 @@
          * ARIA.startListening(div);
          * div[ARIA.observer]; // -> MutationObserver
          */
-        startListening(element) {
+        startListening: function startListening(element) {
 
-            let store = ARIA.observerStore;
+            var store = ARIA.observerStore;
 
             if (!store.has(element)) {
 
-                let observer = new MutationObserver(
-                    ARIA.createMutationHandler(element)
-                );
+                var observer = new MutationObserver(ARIA.createMutationHandler(element));
 
                 observer.observe(element, {
                     attributes: true,
@@ -1929,10 +1883,9 @@
                 });
 
                 store.set(element, observer);
-
             }
-
         },
+
 
         /**
          * Disconnects the MutationObserver added in {@link ARIA.startListening}
@@ -1955,19 +1908,18 @@
          * ARIA.stopListening(div);
          * div[ARIA.observer]; // -> undefined
          */
-        stopListening(element) {
+        stopListening: function stopListening(element) {
 
-            let store = ARIA.observerStore;
-            let observer = store.get(element);
+            var store = ARIA.observerStore;
+            var observer = store.get(element);
 
             if (observer) {
 
                 observer.disconnect();
                 store.delete(element);
-
             }
-
         },
+
 
         /**
          * Adds one or more event listeners to an element. The event listeners
@@ -2044,23 +1996,22 @@
 
             if (ARIA.isObjectLike(attributes)) {
 
-                Object
-                    .entries(attributes)
-                    .forEach(([attr, func]) => on(element, attr, func));
+                Object.entries(attributes).forEach(function (_ref9) {
+                    var _ref10 = _slicedToArray(_ref9, 2),
+                        attr = _ref10[0],
+                        func = _ref10[1];
 
+                    return on(element, attr, func);
+                });
             } else {
 
-                let list = new ARIA.List(attributes);
+                var list = new ARIA.List(attributes);
 
                 ARIA.startListening(element);
-                list
-                    .toArray(ARIA.makeEventName)
-                    .forEach(function (event) {
-                        ARIA.addEventListener(element, event, handler);
-                    });
-
+                list.toArray(ARIA.makeEventName).forEach(function (event) {
+                    ARIA.addEventListener(element, event, handler);
+                });
             }
-
         },
 
         /**
@@ -2121,26 +2072,24 @@
 
             if (ARIA.isObjectLike(attributes)) {
 
-                Object
-                    .entries(attributes)
-                    .forEach(([attr, func]) => off(element, attr, func));
+                Object.entries(attributes).forEach(function (_ref11) {
+                    var _ref12 = _slicedToArray(_ref11, 2),
+                        attr = _ref12[0],
+                        func = _ref12[1];
 
+                    return off(element, attr, func);
+                });
             } else {
 
-                let list = new ARIA.List(attributes);
+                var list = new ARIA.List(attributes);
 
-                list
-                    .toArray(ARIA.makeEventName)
-                    .forEach(function (event) {
-                        ARIA.removeEventListener(element, event, handler);
-                    });
-
+                list.toArray(ARIA.makeEventName).forEach(function (event) {
+                    ARIA.removeEventListener(element, event, handler);
+                });
             }
-
         }
 
     });
-
-
-}(window));
+})(window);
 //# sourceMappingURL=aria.js.map
+//# sourceMappingURL=aria.es5.js.map

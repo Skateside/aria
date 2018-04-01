@@ -302,7 +302,6 @@
          */
         constructor(value) {
 
-            //*
             let iterable = ARIA.asArray(value);
 
             if (iterable.length === 1 && typeof iterable[0] === "string") {
@@ -314,22 +313,6 @@
                     : [];
 
             }
-            /*/
-            let iterable = [];
-
-            if (typeof value === "string") {
-
-                value = value.trim();
-                iterable = value
-                    ? value.split(/\s+/)
-                    : [];
-
-            } else if (ARIA.isArrayLike(value)) {
-                iterable = value;
-            } else if (value) {
-                iterable = [value];
-            }
-            //*/
 
             super(iterable);
 

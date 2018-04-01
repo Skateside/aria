@@ -379,12 +379,249 @@ describe("events", function () {
 
     describe("off", function () {
 
-        it("should have complete documentation", function () {
-            chai.assert.isTrue(false);
+        it("should be able to remove an event", function (done) {
+
+            var div = document.createElement("div");
+            var results = {
+                "aria-busy": true,
+                "aria-checked": false
+            };
+            var handler = function (e) {
+
+                try {
+
+                    var attr = e.detail.attributeName;
+
+                    results[attr] = !results[attr];
+
+                    if (!Object.values(results).includes(false)) {
+                        done();
+                    }
+
+                } catch (ex) {
+                    done(ex);
+                }
+
+            };
+
+            ARIA.on(div, "busy", handler);
+            ARIA.on(div, "checked", handler);
+            ARIA.off(div, "busy", handler);
+            div.setAttribute("aria-busy", true);
+            div.setAttribute("aria-checked", true);
+
         });
 
-        it("should have some freakin' unit tests", function () {
-            chai.assert.isTrue(false);
+        it("should be able to remove multiple handlers", function () {
+
+            var div = document.createElement("div");
+            var results = {
+                "aria-busy": 2,
+                "aria-checked": 0
+            };
+            var is2 = function (value) {
+                return value === 2;
+            };
+            var handler1 = function (e) {
+
+                try {
+
+                    results[e.detail.attributeName] += 1;
+
+                    if (Object.values(results).every(is2)) {
+                        done();
+                    }
+
+                } catch (ex) {
+                    done(ex);
+                }
+
+            };
+            var handler2 = function (e) {
+
+                try {
+
+                    results[e.detail.attributeName] += 1;
+
+                    if (Object.values(results).every(is2)) {
+                        done();
+                    }
+
+                } catch (ex) {
+                    done(ex);
+                }
+
+            };
+
+            ARIA.on(div, "busy", handler1);
+            ARIA.on(div, "busy", handler2);
+            ARIA.on(div, "checked", handler1);
+            ARIA.on(div, "checked", handler2);
+            ARIA.off(div, "busy", handler1);
+            ARIA.off(div, "busy", handler2);
+
+            div.setAttribute("aria-busy", true);
+            div.setAttribute("aria-checked", true);
+
+        });
+
+        it("should be able to remove multiple events (string)", function () {
+
+            var div = document.createElement("div");
+            var results = {
+                "aria-busy": 0,
+                "aria-checked": 0
+            };
+            var is2 = function (value) {
+                return value === 2;
+            };
+            var handler1 = function (e) {
+
+                try {
+
+                    results[e.detail.attributeName] += 1;
+
+                    if (Object.values(results).every(is2)) {
+                        done();
+                    }
+
+                } catch (ex) {
+                    done(ex);
+                }
+
+            };
+            var handler2 = function (e) {
+
+                try {
+
+                    results[e.detail.attributeName] += 1;
+
+                    if (Object.values(results).every(is2)) {
+                        done();
+                    }
+
+                } catch (ex) {
+                    done(ex);
+                }
+
+            };
+
+            ARIA.on(div, "busy checked", handler1);
+            ARIA.on(div, "busy checked", handler2);
+            ARIA.off(div, "busy checked", handler1);
+
+            div.setAttribute("aria-busy", true);
+            div.setAttribute("aria-checked", true);
+
+        });
+
+        it("should be able to remove multiple events (array)", function () {
+
+            var div = document.createElement("div");
+            var results = {
+                "aria-busy": 0,
+                "aria-checked": 0
+            };
+            var is2 = function (value) {
+                return value === 2;
+            };
+            var handler1 = function (e) {
+
+                try {
+
+                    results[e.detail.attributeName] += 1;
+
+                    if (Object.values(results).every(is2)) {
+                        done();
+                    }
+
+                } catch (ex) {
+                    done(ex);
+                }
+
+            };
+            var handler2 = function (e) {
+
+                try {
+
+                    results[e.detail.attributeName] += 1;
+
+                    if (Object.values(results).every(is2)) {
+                        done();
+                    }
+
+                } catch (ex) {
+                    done(ex);
+                }
+
+            };
+
+            ARIA.on(div, ["busy", "checked"], handler1);
+            ARIA.on(div, ["busy", "checked"], handler2);
+            ARIA.off(div, ["busy", "checked"], handler1);
+
+            div.setAttribute("aria-busy", true);
+            div.setAttribute("aria-checked", true);
+
+        });
+
+        it("should be able to remove multiple events (object)", function () {
+
+            var div = document.createElement("div");
+            var results = {
+                "aria-busy": 0,
+                "aria-checked": 0
+            };
+            var is2 = function (value) {
+                return value === 2;
+            };
+            var handler1 = function (e) {
+
+                try {
+
+                    results[e.detail.attributeName] += 1;
+
+                    if (Object.values(results).every(is2)) {
+                        done();
+                    }
+
+                } catch (ex) {
+                    done(ex);
+                }
+
+            };
+            var handler2 = function (e) {
+
+                try {
+
+                    results[e.detail.attributeName] += 1;
+
+                    if (Object.values(results).every(is2)) {
+                        done();
+                    }
+
+                } catch (ex) {
+                    done(ex);
+                }
+
+            };
+
+            ARIA.on(div, {
+                busy: handler1,
+                checked: handler1
+            });
+            ARIA.on(div, {
+                busy: handler2,
+                checked: handler2
+            });
+            ARIA.off(div, {
+                busy: handler1,
+                checked: handler1
+            });
+
+            div.setAttribute("aria-busy", true);
+            div.setAttribute("aria-checked", true);
+
         });
 
     });
