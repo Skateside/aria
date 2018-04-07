@@ -88,6 +88,13 @@
 
     };
 
+    /**
+     * Collection of templates that can add WAI-ARIA attributes to markup.
+     *
+     * @namespace
+     */
+    ARIA.templates = {};
+
     globalVariable.ARIA = ARIA;
 
 }(window));
