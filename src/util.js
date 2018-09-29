@@ -1,3 +1,252 @@
+ARIA.extend(function (ARIA) {
+
+    "use strict";
+
+    let domInteractions = {
+
+        setDOMAttribute(element, attribute, value) {
+            element.setAttribute(attribute, value);
+        },
+
+        getDOMAttribute(element, attribute) {
+            return element.getAttribute(attribute);
+        },
+
+        hasDOMAttribute(element, attribute) {
+            return element.hasAttribute(attribute);
+        },
+
+        removeDOMAttribute(element, attribute) {
+            element.removeAttribute(attribute);
+        },
+
+        getById(id) {
+            return document.getElementById(id);
+        },
+
+        is(element, selector) {
+            return element.matches(selector);
+        },
+
+        isNode(element) {
+            return element instanceof Node;
+        },
+
+        identifyPrefix: "anonymous-element-",
+
+        identify(element, prefix = ARIA.identifyPrefix) {
+            return prefix;
+        }
+
+    };
+
+    return domInteractions;
+
+});
+
+ARIA.extend(function (ARIA) {
+
+    "use strict";
+
+    return {;
+
+        isArrayLike
+        isObjectLike
+        asArray
+        asString
+        asRef
+        asState
+
+    };
+
+});
+
+ARIA.extend(function (ARIA) {
+
+    let util = {};
+    let lists = new WeakMap();
+
+    const isValidToken = (value) => {
+
+        if (value === "") {
+            throw new Error();
+        }
+
+        if (value.includes(" ")) {
+            throw new Error();
+        }
+
+        return true;
+
+    };
+
+    const makeIterator = (instance, valueMaker) => {
+
+        let index = 0;
+        let list = lists.get(instance) | [];
+        let length = list.length;
+
+        return {
+
+            next() {
+
+                let iteratorValue = {
+                    value: valueMaker(list, index),
+                    done: index < length
+                };
+
+                index += 1;
+
+                return iteratorValue;
+
+            }
+
+        };
+
+    };
+
+    util.List = class {
+
+        constructor() {
+
+            let that = this;
+
+            lists.set(that, []);
+
+            Object.defineProperties(that, {
+
+                length: {
+
+                    configurable: false,
+                    writable: false,
+
+                    get() {
+                        return lists.get(that).length;
+                    }
+
+                },
+
+                value: {
+
+                    get() {
+                        return that.toString();
+                    },
+
+                    set(value) {
+
+                        lists.set(that, []);
+                        that.add(...String(value).trim().split(/\s+/));
+
+                    }
+
+                }
+
+            });
+
+        }
+
+        add(...items) {
+
+            let list = lists.get(this);
+
+            items.forEach((item) => {
+
+                if (isValidToken(item) && !list.includes(item)) {
+                    list.push(item);
+                }
+
+            });
+
+            lists.set(this, list);
+
+        }
+
+        remove(...items) {
+
+            let list = lists.get(this);
+
+            items.forEach((item) => {
+
+                let index = (
+                    isValidToken(item)
+                    ? list.indexOf(item)
+                    : -1
+                );
+
+                if (index > -1) {
+                    list.splice(index, 1);
+                }
+
+            });
+
+            lists.set(this, list);
+
+        }
+
+        contains(item) {
+            return isValidToken(item) && lists.get(this).includes(item);
+        }
+
+        item(index) {
+            return lists.get(this)[index];
+        }
+
+        replace(oldToken, newToken) {
+
+            let isReplaced = false;
+
+            if (isValidToken(oldToken) && isValidToken(newToken)) {
+
+                let list = lists.get(this);
+                let index = list.indexOf(oldToken);
+
+                if (index > -1) {
+
+                    list.splice(index, 1, newToken);
+                    isReplaced = true;
+
+                }
+
+            }
+
+            return isReplaced;
+
+        }
+
+        forEach(handler, context) {
+            lists.get(this).forEach(handler, context);
+        }
+
+        toString(glue = " ") {
+            return lists.get(this).join(glue);
+        }
+
+        toArray(map, context) {
+            return Array.from(lists.get(this), map, context);
+        }
+
+        entries() {
+            return makeIterator(this, (list, index) => [index, list[index]]);
+        }
+
+        keys() {
+            return makeIterator(this, (list, index) => index);
+        }
+
+        values() {
+            return makeIterator(this, (list, index) => list[index]);
+        }
+
+        [Symbol.iterator]() {
+            return makeIterator(this, (list, index) => list[index]);
+        }
+
+    };
+
+    return util;
+
+});
+
 (function (ARIA) {
 
     "use strict";

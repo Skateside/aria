@@ -8,6 +8,8 @@
 
     "use strict";
 
+    let previousAria = globalVariable.ARIA;
+
     /**
      * Namespace for the WAI-ARIA functions.
      *
@@ -24,43 +26,6 @@
      */
     let VERSION = "<%= version %>";
 
-    let previousAria = globalVariable.ARIA;
-    let hiddenDescriptor = {
-        configurable: true,
-        enumerable: false,
-        writable: true
-    };
-
-    /**
-     * @memberof ARIA
-     * @param    {Object} methods
-     *           Methods to publicly add to the {@link ARIA} namespace.
-     */
-    function extend(methods) {
-        Object.assign(ARIA, methods);
-    }
-
-    /**
-     * @memberof ARIA
-     * @param    {Object} methods
-     *           Methods to privately add to the {@link ARIA} namespace.
-     */
-    function extendHidden(methods) {
-
-        Object
-            .entries(methods)
-            .forEach(function ([name, value]) {
-
-                Object.defineProperty(
-                    ARIA,
-                    name,
-                    Object.assign({value}, hiddenDescriptor)
-                );
-
-            });
-
-    }
-
     Object.defineProperty(ARIA, "VERSION", {
         configurable: false,
         enumerable: true,
@@ -68,10 +33,31 @@
         value: VERSION
     });
 
-    extendHidden({
-        extend,
-        extendHidden
-    });
+    /**
+     * @memberof ARIA
+     * @param    {Function|Object} methods
+     *           Either the methods to add to {@link ARIA} or a function that
+     *           creates the methods.
+     * @throws   {Error}
+     *           Cannot replace {@link ARIA.extend} with this method.
+     */
+    ARIA.extend = function (methods) {
+
+        if (typeof methods === "function") {
+            methods = methods(ARIA);
+        }
+
+        if (methods) {
+
+            if (methods.extend) {
+                throw new Error("Cannot replace ARIA.extend");
+            }
+
+            Object.assign(ARIA, methods);
+
+        }
+
+    };
 
     /**
      * Removes the {@link ARIA} namespace from the global object and restores
@@ -87,13 +73,6 @@
         return ARIA;
 
     };
-
-    /**
-     * Collection of templates that can add WAI-ARIA attributes to markup.
-     *
-     * @namespace
-     */
-    ARIA.templates = {};
 
     globalVariable.ARIA = ARIA;
 
